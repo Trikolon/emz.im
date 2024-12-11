@@ -106,7 +106,7 @@ select {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  width: 64px;
+  width: 128px;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
