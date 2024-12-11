@@ -100,3 +100,15 @@ select {
     transition: none;
   }
 }
+
+/* Pixel Cat */
+.pixel-cat {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 64px;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: pointer;
+}
