@@ -1,0 +1,74 @@
+/* Light theme (default) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --link-color: #0066cc;
+  --heading-color: #222222;
+  --border-color: #dddddd;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --link-color: #66b3ff;
+    --heading-color: #ffffff;
+    --border-color: #404040;
+  }
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--link-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color);
+  font-family: var(--font-family);
+}
+
+/* Add border color for common elements */
+hr,
+input,
+textarea,
+select {
+  border-color: var(--border-color);
+  font-family: var(--font-family);
+}
+
+.expandable-name {
+  display: inline-flex;
+  align-items: baseline;
+  cursor: pointer;
+  border-bottom: 1px dotted var(--text-color);
+}
+
+.full-name {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  transition:
+    max-width 0.3s ease-in-out,
+    opacity 0.2s ease-in-out;
+  white-space: pre;
+  line-height: inherit;
+}
+
+.expandable-name:hover .full-name {
+  max-width: 200px;
+}
