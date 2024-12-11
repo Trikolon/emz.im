@@ -70,7 +70,18 @@ select {
   line-height: inherit;
 }
 
+.expandable-name:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
 .expandable-name:hover .full-name,
 .expandable-name:focus .full-name {
   max-width: 200px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .full-name {
+    transition: none;
+  }
 }
