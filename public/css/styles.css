@@ -112,3 +112,10 @@ select {
   image-rendering: crisp-edges;
   cursor: pointer;
 }
+
+/* No animated cats when reduced motion is preferred, sorry :-( */
+@media (prefers-reduced-motion: reduce) {
+  .pixel-cat {
+    display: none;
+  }
+}
