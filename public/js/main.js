@@ -25,6 +25,7 @@
   ];
 
   const pixelCat = document.querySelector(".pixel-cat");
+  const pixelCatContainer = document.querySelector(".pixel-cat-container");
   let initialTimeout;
   let wakeUpTimeout;
   let animationInterval;
@@ -36,7 +37,7 @@
 
   // Add click handler to make cat disappear
   pixelCat.addEventListener("click", () => {
-    pixelCat.style.display = "none";
+    pixelCatContainer.style.display = "none";
     // Clear all pending timeouts and intervals
     clearTimeout(initialTimeout);
     clearTimeout(wakeUpTimeout);

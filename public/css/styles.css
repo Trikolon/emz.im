@@ -110,6 +110,7 @@ select {
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  z-index: 1;
 }
 
 .pixel-cat-interactive {
@@ -121,4 +122,38 @@ select {
   .pixel-cat {
     display: none;
   }
+}
+
+.pixel-cat-light {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pixel-cat-light {
+    display: block;
+  }
+}
+
+/* Add a separate light cone element */
+.pixel-cat-light {
+  position: fixed;
+  bottom: 0;
+  right: calc(1rem + 64px);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(255, 236, 179, 0.8) 0%,
+    rgba(255, 236, 179, 0.4) 30%,
+    transparent 70%
+  );
+  clip-path: polygon(
+    30% 0%,
+    70% 0%,
+    100% 100%,
+    0% 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(50%);
 }
