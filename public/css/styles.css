@@ -110,6 +110,9 @@ select {
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+.pixel-cat-interactive {
   cursor: pointer;
 }
 
