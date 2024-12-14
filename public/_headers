@@ -2,4 +2,4 @@
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Permissions-Policy: geolocation=(), camera=(), microphone=()
-  Content-Security-Policy: default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none';
+  Content-Security-Policy: default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none';

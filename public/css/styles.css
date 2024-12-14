@@ -101,24 +101,14 @@ select {
   }
 }
 
-/* Pixel Cat */
-.pixel-cat {
+pixel-cat {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  width: 128px;
-  height: auto;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
-.pixel-cat-interactive {
-  cursor: pointer;
-}
-
-/* No animated cats when reduced motion is preferred, sorry :-( */
 @media (prefers-reduced-motion: reduce) {
-  .pixel-cat {
+  pixel-cat {
     display: none;
   }
 }
