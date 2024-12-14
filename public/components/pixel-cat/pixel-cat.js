@@ -32,7 +32,7 @@ class PixelCat extends HTMLElement {
         <img alt="Charlie the Cat" title="Dismiss Charlie the cat">
       `;
 
-    this.CAT_ASSETS_PATH = "img/cat";
+    this.CAT_ASSETS_PATH = "components/pixel-cat/img";
     this.ANIMATIONS = [
       "cat05_crouch_8fps.gif",
       "cat05_idle_8fps.gif",
