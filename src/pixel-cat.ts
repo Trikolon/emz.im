@@ -23,9 +23,9 @@ export class PixelCat extends LitElement {
   ];
 
   private sleeping: boolean;
-  private initialTimeout: ReturnType<typeof setTimeout> | null = null;
-  private wakeUpTimeout: ReturnType<typeof setTimeout> | null = null;
-  private animationInterval: ReturnType<typeof setInterval> | null = null;
+  private initialTimeout: number | null = null;
+  private wakeUpTimeout: number | null = null;
+  private animationInterval: number | null = null;
   private currentAnimation: string;
   public hidden: boolean;
 
