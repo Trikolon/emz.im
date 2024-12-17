@@ -23,20 +23,21 @@ export class PixelCat extends LitElement {
   ];
 
   private sleeping: boolean;
-  private initialTimeout: number | null;
-  private wakeUpTimeout: number | null;
-  private animationInterval: number | null;
+  private initialTimeout: ReturnType<typeof setTimeout> | null = null;
+  private wakeUpTimeout: ReturnType<typeof setTimeout> | null = null;
+  private animationInterval: ReturnType<typeof setInterval> | null = null;
   private currentAnimation: string;
   public hidden: boolean;
 
   static properties = {
     hidden: { type: Boolean, reflect: true },
     sleeping: { type: Boolean, reflect: true },
+    currentAnimation: { state: true },
   };
 
   static styles = css`
-    :host[hidden] img {
-      display: none !important;
+    :host([hidden]) {
+      display: none;
     }
 
     img {
@@ -46,12 +47,6 @@ export class PixelCat extends LitElement {
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       cursor: pointer;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      :host {
-        display: none;
-      }
     }
   `;
 
@@ -63,7 +58,9 @@ export class PixelCat extends LitElement {
     this.animationInterval = null;
     this.currentAnimation = catSleep;
     this.hidden = false;
+  }
 
+  protected firstUpdated(): void {
     this.startAnimation();
   }
 
@@ -99,41 +96,40 @@ export class PixelCat extends LitElement {
     this.clearAllTimers();
   }
 
+  private get getRandomAnimationInterval(): number {
+    return Math.random() * 12000 + 8000;
+  }
+
+  private get getRandomWakeTime(): number {
+    return Math.random() * 2000 + 3000;
+  }
+
   private startAnimation(): void {
     // Wake up after 3-5 seconds
-    this.initialTimeout = window.setTimeout(
-      () => {
-        if (this.sleeping) {
-          // If sleeping, just stay in sleep animation
-          this.currentAnimation = catSleep;
-          return;
+    this.initialTimeout = window.setTimeout(() => {
+      if (this.sleeping) {
+        // If sleeping, just stay in sleep animation
+        this.currentAnimation = catSleep;
+        return;
+      }
+
+      // Show waking up animation
+      this.currentAnimation = catLieDown;
+
+      // Start random animations after a short delay
+      this.wakeUpTimeout = window.setTimeout(() => {
+        if (!this.sleeping) {
+          this.updateCatAnimation();
+
+          // Then change periodically (every 8-20 seconds)
+          this.animationInterval = window.setInterval(() => {
+            if (!this.sleeping) {
+              this.updateCatAnimation();
+            }
+          }, this.getRandomAnimationInterval);
         }
-
-        // Show waking up animation
-        this.currentAnimation = catLieDown;
-        this.requestUpdate();
-
-        // Start random animations after a short delay
-        this.wakeUpTimeout = window.setTimeout(() => {
-          if (!this.sleeping) {
-            this.updateCatAnimation();
-            this.requestUpdate();
-
-            // Then change periodically (every 8-20 seconds)
-            this.animationInterval = window.setInterval(
-              () => {
-                if (!this.sleeping) {
-                  this.updateCatAnimation();
-                  this.requestUpdate();
-                }
-              },
-              Math.random() * 12000 + 8000,
-            );
-          }
-        }, 3000);
-      },
-      Math.random() * 2000 + 3000,
-    );
+      }, 3000);
+    }, this.getRandomWakeTime);
   }
 }
 
