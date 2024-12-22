@@ -11,16 +11,15 @@
     <title>Emma Zuehlcke</title>
     <link rel="stylesheet" href="./src/index.css" />
     <script type="module" src="/src/index.ts"></script>
+    <script type="module" src="/src/text-expand.ts"></script>
     <script type="module" src="/src/pixel-cat.ts"></script>
   </head>
   <body>
     <main>
       <p>
         Hi, I'm
-        <span class="expandable-name" tabindex="0" role="button" aria-expanded="false">
-          Emma<span class="full-name" aria-label="Zühlcke (she/her)"> Zühlcke (she/her)</span>
-        </span>, a software engineer based in
-        <a href="https://www.openstreetmap.org/?mlat=52.5200&mlon=13.4050">Berlin</a> working
+        <text-expand text="Emma" expandedText=" Zühlcke (she/her)"></text-expand>, a software
+        engineer based in <text-expand text="Berlin" expandedText=", Germany"></text-expand> working
         on privacy things for Gecko & Firefox at Mozilla.
       </p>
       <p>

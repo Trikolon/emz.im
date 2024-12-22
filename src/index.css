@@ -66,41 +66,6 @@ select {
   font-family: var(--font-family);
 }
 
-.expandable-name {
-  display: inline-flex;
-  align-items: baseline;
-  cursor: pointer;
-  border-bottom: 1px dotted var(--text-color);
-  outline: none;
-}
-
-.full-name {
-  display: inline-block;
-  max-width: 0;
-  overflow: hidden;
-  transition:
-    max-width 0.3s ease-in-out,
-    opacity 0.2s ease-in-out;
-  white-space: pre;
-  line-height: inherit;
-}
-
-.expandable-name:focus-visible {
-  outline: 2px solid var(--link-color);
-  outline-offset: 2px;
-}
-
-.expandable-name:hover .full-name,
-.expandable-name:focus .full-name {
-  max-width: 200px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .full-name {
-    transition: none;
-  }
-}
-
 pixel-cat {
   position: fixed;
   bottom: 1rem;
