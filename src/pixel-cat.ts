@@ -71,6 +71,9 @@ export class PixelCat extends LitElement {
         alt="Charlie the Cat"
         title="Dismiss Charlie the cat"
         @click=${this.dismiss}
+        @keydown=${(e: KeyboardEvent) => e.key === "Enter" && this.dismiss()}
+        tabindex="0"
+        role="button"
       />
     `;
   }
