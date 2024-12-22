@@ -1,4 +1,5 @@
 import { LitElement, html, css } from "lit";
+import { customElement, eventOptions, property } from "lit/decorators.js";
 
 // Import GIF assets
 import catCrouch from "./assets/pixel-cat/cat05_crouch_8fps.gif";
@@ -10,7 +11,12 @@ import catSleep from "./assets/pixel-cat/cat05_sleep_8fps.gif";
 import catSneak from "./assets/pixel-cat/cat05_sneak_8fps.gif";
 import catWalk from "./assets/pixel-cat/cat05_walk_8fps.gif";
 
+@customElement("pixel-cat")
 export class PixelCat extends LitElement {
+  @property({ type: Boolean, reflect: true }) hidden = false;
+  @property({ type: Boolean, reflect: true }) sleeping = false;
+  @property({ type: String, reflect: true }) currentAnimation = catSleep;
+
   private readonly ANIMATIONS: string[] = [
     catCrouch,
     catIdle,
@@ -22,20 +28,11 @@ export class PixelCat extends LitElement {
     catWalk,
   ];
 
-  private sleeping: boolean;
   private initialTimeout: number | null = null;
   private wakeUpTimeout: number | null = null;
   private animationInterval: number | null = null;
-  private currentAnimation: string;
-  public hidden: boolean;
 
-  static properties = {
-    hidden: { type: Boolean, reflect: true },
-    sleeping: { type: Boolean, reflect: true },
-    currentAnimation: { state: true },
-  };
-
-  static styles = css`
+  static readonly styles = css`
     :host([hidden]) {
       display: none;
     }
@@ -94,6 +91,7 @@ export class PixelCat extends LitElement {
     this.currentAnimation = selectedAnimation;
   }
 
+  @eventOptions({ passive: true })
   private dismiss(): void {
     this.hidden = true;
     this.clearAllTimers();
@@ -135,5 +133,3 @@ export class PixelCat extends LitElement {
     }, this.getRandomWakeTime);
   }
 }
-
-customElements.define("pixel-cat", PixelCat);

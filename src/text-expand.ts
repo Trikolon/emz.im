@@ -1,16 +1,13 @@
 import { LitElement, html, css } from "lit";
-
+import { customElement, property } from "lit/decorators.js";
 // FIXME: When the text expands causing a line break the expand animation glitches.
 
+@customElement("text-expand")
 export class TextExpand extends LitElement {
-  static properties = {
-    text: { type: String, reflect: false },
-    expandedText: { type: String, reflect: false },
-  };
+  @property({ type: String }) text = "";
+  @property({ type: String }) expandedText = "";
 
-  private text = "";
-  private expandedText = "";
-  static styles = css`
+  static readonly styles = css`
     .container {
       display: inline-flex;
       align-items: baseline;
@@ -63,5 +60,3 @@ export class TextExpand extends LitElement {
     // consumers.
   }
 }
-
-customElements.define("text-expand", TextExpand);
