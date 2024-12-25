@@ -67,9 +67,9 @@ select {
 }
 
 pixel-cat {
-  position: fixed;
+  /* position: fixed;
   bottom: 1rem;
-  right: 1rem;
+  right: 1rem; */
 }
 
 @media (prefers-reduced-motion: reduce) {
