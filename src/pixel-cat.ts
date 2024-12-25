@@ -8,7 +8,6 @@ import catIdleBlink from "./assets/pixel-cat/cat05_idle_blink_8fps.gif";
 import catLieDown from "./assets/pixel-cat/cat05_liedown_8fps.gif";
 import catSit from "./assets/pixel-cat/cat05_sit_8fps.gif";
 import catSleep from "./assets/pixel-cat/cat05_sleep_8fps.gif";
-import catSneak from "./assets/pixel-cat/cat05_sneak_8fps.gif";
 import catWalk from "./assets/pixel-cat/cat05_walk_8fps.gif";
 
 @customElement("pixel-cat")
@@ -20,17 +19,6 @@ export class PixelCat extends LitElement {
   @property({ type: Number }) y = 0;
   private movementInterval: number | null = null;
   private direction = 1; // 1 for right, -1 for left
-
-  private readonly ANIMATIONS: string[] = [
-    catCrouch,
-    catIdle,
-    catIdleBlink,
-    catLieDown,
-    catSit,
-    catSleep,
-    catSneak,
-    catWalk,
-  ];
 
   private initialTimeout: number | null = null;
   private wakeUpTimeout: number | null = null;
@@ -99,19 +87,10 @@ export class PixelCat extends LitElement {
     if (this.movementInterval) clearInterval(this.movementInterval);
   }
 
-  private updateCatAnimation(): void {
-    const selectedAnimation = this.ANIMATIONS[Math.floor(Math.random() * this.ANIMATIONS.length)];
-    this.currentAnimation = selectedAnimation;
-  }
-
   @eventOptions({ passive: true })
   private dismiss(): void {
     this.hidden = true;
     this.clearAllTimers();
-  }
-
-  private get getRandomAnimationInterval(): number {
-    return Math.random() * 12000 + 8000;
   }
 
   private get getRandomWakeTime(): number {
