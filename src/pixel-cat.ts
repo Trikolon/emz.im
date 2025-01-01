@@ -32,6 +32,9 @@ export class PixelCat extends LitElement {
   private wakeUpTimeout: number | null = null;
   private animationInterval: number | null = null;
 
+  // Cache for cat animations.
+  private preloadedAnimations: HTMLImageElement[] = [];
+
   static readonly styles = css`
     :host([hidden]) {
       display: none;
@@ -58,6 +61,7 @@ export class PixelCat extends LitElement {
   }
 
   protected firstUpdated(): void {
+    this.preloadAnimations();
     this.startAnimation();
   }
 
@@ -78,6 +82,13 @@ export class PixelCat extends LitElement {
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.clearAllTimers();
+
+    // Clean up preloaded images
+    this.preloadedAnimations.forEach((img) => {
+      img.src = ""; // Clear the source
+      img.remove(); // Remove from DOM if it was somehow added
+    });
+    this.preloadedAnimations = [];
   }
 
   private clearAllTimers(): void {
@@ -86,9 +97,18 @@ export class PixelCat extends LitElement {
     if (this.animationInterval) clearInterval(this.animationInterval);
   }
 
+  private preloadAnimations(): void {
+    this.preloadedAnimations = this.ANIMATIONS.map((url) => {
+      const img = new Image();
+      img.src = url;
+      return img;
+    });
+  }
+
   private updateCatAnimation(): void {
-    const selectedAnimation = this.ANIMATIONS[Math.floor(Math.random() * this.ANIMATIONS.length)];
-    this.currentAnimation = selectedAnimation;
+    const randomIndex = Math.floor(Math.random() * this.ANIMATIONS.length);
+    // Use the preloaded image's src instead of the direct URL
+    this.currentAnimation = this.preloadedAnimations[randomIndex].src;
   }
 
   @eventOptions({ passive: true })
