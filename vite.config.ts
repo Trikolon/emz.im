@@ -5,8 +5,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        photos: 'photos.html',
         404: '404.html'
       }
     }
   }
-}) 
+})
