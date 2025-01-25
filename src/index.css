@@ -79,3 +79,7 @@ pixel-cat {
     display: none;
   }
 }
+
+.compact {
+  max-width: 65ch;
+}
