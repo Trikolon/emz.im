@@ -58,7 +58,7 @@ export class PhotoGallery extends LitElement {
       src: vienna,
       alt: "A street view of a building featuring a shop with a metal shutter painted with a cartoonish bear-like creature. The sign above reads Juwelen, and the door and windows are adorned with graffiti. The sidewalk is made of stone tiles.",
       caption: "Vienna",
-      date: new Date("2017-01-01"),
+      date: new Date("2023-01-01"),
     },
     {
       src: vancouver,
