@@ -191,7 +191,15 @@ export class PhotoGallery extends LitElement {
     return html`
       <div class="gallery-item">
         <a href="${image.src}" target="_blank" rel="noopener">
-          <img src="${image.src}" alt="${image.alt}" title="${this.getImageTitle(image)}" />
+          <img
+            src="${image.src}"
+            alt="${image.alt}"
+            title="${this.getImageTitle(image)}"
+            loading="lazy"
+            decoding="async"
+            width="300"
+            height="300"
+          />
         </a>
         <div class="caption">
           <h3>${image.caption}</h3>
