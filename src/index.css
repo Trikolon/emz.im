@@ -2,6 +2,7 @@
 :root {
   --bg-color: #ffffff;
   --text-color: #333333;
+  --text-secondary: #666666;
   --link-color: #0066cc;
   --heading-color: #222222;
   --border-color: #dddddd;
@@ -15,6 +16,7 @@
   :root {
     --bg-color: #1a1a1a;
     --text-color: #e0e0e0;
+    --text-secondary: #a0a0a0;
     --link-color: #66b3ff;
     --heading-color: #ffffff;
     --border-color: #404040;
