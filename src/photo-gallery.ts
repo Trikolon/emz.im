@@ -1,18 +1,18 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
 
-import reflections from "./assets/photos/reflections.webp";
-import montreal from "./assets/photos/montreal.webp";
-import asiaWok from "./assets/photos/asia-wok.webp";
-import shadesOfBlue from "./assets/photos/shades-of-blue.webp";
-import surveillance from "./assets/photos/surveillance.webp";
-import tempelhof from "./assets/photos/tempelhof.webp";
-import teufelsberg from "./assets/photos/teufelsberg.webp";
-import vancouver from "./assets/photos/vancouver.webp";
-import windows from "./assets/photos/windows.webp";
-import vienna from "./assets/photos/vienna.webp";
-import mutedSky from "./assets/photos/muted-sky.webp";
-import oulu from "./assets/photos/oulu.webp";
+import reflections from "./assets/photos/reflections.avif";
+import montreal from "./assets/photos/montreal.avif";
+import asiaWok from "./assets/photos/asia-wok.avif";
+import shadesOfBlue from "./assets/photos/shades-of-blue.avif";
+import surveillance from "./assets/photos/surveillance.avif";
+import tempelhof from "./assets/photos/tempelhof.avif";
+import teufelsberg from "./assets/photos/teufelsberg.avif";
+import vancouver from "./assets/photos/vancouver.avif";
+import windows from "./assets/photos/windows.avif";
+import vienna from "./assets/photos/vienna.avif";
+import mutedSky from "./assets/photos/muted-sky.avif";
+import oulu from "./assets/photos/oulu.avif";
 
 interface GalleryImage {
   src: string;
