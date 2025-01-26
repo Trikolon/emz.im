@@ -103,6 +103,16 @@ export class PhotoGallery extends LitElement {
   ];
 
   static readonly styles = css`
+    /* Use the same link styling as the rest of the site */
+    a {
+      color: var(--link-color);
+    }
+
+    a:hover,
+    a:focus {
+      color: var(--link-color-hover);
+    }
+
     .gallery {
       display: flex;
       flex-wrap: wrap;
@@ -133,7 +143,6 @@ export class PhotoGallery extends LitElement {
 
     .caption {
       padding: 0.5rem;
-      color: var(--text-color);
     }
 
     .caption h3 {
