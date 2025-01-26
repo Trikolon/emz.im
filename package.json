@@ -9,16 +9,18 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "convert-photos": "bash scripts/photos/convertPhotos.sh"
+    "convert-photos": "scripts/photos/convertPhotos.cjs"
   },
   "author": "Emma Zuehlcke",
   "license": "MIT",
   "devDependencies": {
+    "exifr": "^7.1.3",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.9"
   },
   "dependencies": {
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "sharp": "^0.33.2"
   }
 }
