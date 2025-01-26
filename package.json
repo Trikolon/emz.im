@@ -8,7 +8,8 @@
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "convert-photos": "bash scripts/photos/convertPhotos.sh"
   },
   "author": "Emma Zuehlcke",
   "license": "MIT",
