@@ -19,6 +19,8 @@ interface GalleryImage {
   alt: string;
   caption: string;
   date?: Date;
+  // Optional field to tweak position of the gallery preview image.
+  position?: string;
 }
 
 @customElement("photo-gallery")
@@ -76,12 +78,14 @@ export class PhotoGallery extends LitElement {
       src: teufelsberg,
       alt: "Aerial view of a vast green forest under a partly cloudy sky. Sunlight streams through clouds, illuminating patches of the forest. Two geodesic dome structures are visible on a hill to the left. A distant body of water is seen on the horizon.",
       caption: "Teufelsberg",
+      position: "left center",
       date: new Date("2021-01-01"),
     },
     {
       src: mutedSky,
       alt: "Dark gray storm clouds loom over a landscape with trees and a field. The trees are lush and green, contrasting with the dramatic sky, suggesting an impending storm.",
       caption: "Muted Sky",
+      position: "center bottom",
       date: new Date("2021-01-01"),
     },
     {
@@ -123,6 +127,7 @@ export class PhotoGallery extends LitElement {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: var(--image-position, center);
       border-radius: 4px;
     }
 
@@ -199,6 +204,7 @@ export class PhotoGallery extends LitElement {
             decoding="async"
             width="300"
             height="300"
+            style="${image.position ? `--image-position: ${image.position}` : ""}"
           />
         </a>
         <div class="caption">
