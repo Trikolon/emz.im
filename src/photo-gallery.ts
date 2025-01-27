@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
+import "./lightbox-dialog";
 
 import reflections from "./assets/photos/reflections.avif";
 import montreal from "./assets/photos/montreal.avif";
@@ -196,15 +197,26 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
+   * Handles opening the lightbox when an image is clicked
+   */
+  private handleImageClick(e: Event, image: GalleryImage) {
+    e.preventDefault();
+    const lightbox = this.renderRoot.querySelector("lightbox-dialog");
+    if (lightbox) {
+      lightbox.src = image.src;
+      lightbox.alt = image.alt;
+      lightbox.title = this.getImageTitle(image);
+      lightbox.show();
+    }
+  }
+
+  /**
    * Renders a single gallery item with image and caption
-   *
-   * @param image - The gallery image object to render
-   * @returns Template for a gallery item
    */
   private renderGalleryItem(image: GalleryImage) {
     return html`
       <div class="gallery-item">
-        <a href="${image.src}" target="_blank" rel="noopener">
+        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, image)}">
           <img
             src="${image.src}"
             alt="${image.alt}"
@@ -237,6 +249,7 @@ export class PhotoGallery extends LitElement {
 
     return html`
       <div class="gallery"> ${sortedImages.map((image) => this.renderGalleryItem(image))} </div>
+      <lightbox-dialog></lightbox-dialog>
     `;
   }
 }
