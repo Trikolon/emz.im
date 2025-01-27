@@ -92,7 +92,7 @@ export class PhotoGallery extends LitElement {
       src: tempelhof,
       alt: "A vast field of golden grass under a clear blue sky as the sun sets. In the distance, a citys skyline is visible with various buildings and towers. The scene is peaceful and illuminated by warm, golden light.",
       caption: "Tempelhof",
-      date: new Date("2019-01-01"),
+      date: new Date("2018-01-01"),
     },
     {
       src: oulu,
