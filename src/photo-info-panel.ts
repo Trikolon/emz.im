@@ -1,14 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-
-interface PhotoMetadata {
-  DateTimeOriginal: string;
-  ExposureTime: number;
-  FNumber: number;
-  ISO: number;
-  FocalLength: number;
-  LensModel?: string;
-}
+import { PhotoMetadata } from "./types";
 
 @customElement("photo-info-panel")
 export class PhotoInfoPanel extends LitElement {
@@ -58,13 +50,28 @@ export class PhotoInfoPanel extends LitElement {
     }
   `;
 
-  private formatExposureTime(time: number): string {
+  private formatExposureTime(time?: number): string {
+    if (!time) return "—";
     if (time >= 1) return `${time}s`;
     return `1/${Math.round(1 / time)}s`;
   }
 
-  private formatFocalLength(length: number): string {
+  private formatFocalLength(length?: number): string {
+    if (!length) return "—";
     return `${Math.round(length)}mm`;
+  }
+
+  private formatAperture(fNumber?: number): string {
+    if (!fNumber) return "—";
+    return `ƒ/${fNumber.toFixed(1)}`;
+  }
+
+  private formatDate(dateStr: string): string {
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "—";
+    }
   }
 
   render() {
@@ -75,9 +82,7 @@ export class PhotoInfoPanel extends LitElement {
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Date</span>
-            <span class="info-value">
-              ${new Date(this.metadata.DateTimeOriginal).toLocaleDateString()}
-            </span>
+            <span class="info-value"> ${this.formatDate(this.metadata.DateTimeOriginal)} </span>
           </div>
           <div class="info-item">
             <span class="info-label">Exposure</span>
@@ -85,11 +90,11 @@ export class PhotoInfoPanel extends LitElement {
           </div>
           <div class="info-item">
             <span class="info-label">Aperture</span>
-            <span class="info-value">ƒ/${this.metadata.FNumber.toFixed(1)}</span>
+            <span class="info-value">${this.formatAperture(this.metadata.FNumber)}</span>
           </div>
           <div class="info-item">
             <span class="info-label">ISO</span>
-            <span class="info-value">${this.metadata.ISO}</span>
+            <span class="info-value">${this.metadata.ISO ?? "—"}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Focal Length</span>

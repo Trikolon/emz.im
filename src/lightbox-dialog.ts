@@ -1,15 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { PhotoMetadata } from "./types";
 import "./photo-info-panel";
-
-interface PhotoMetadata {
-  DateTimeOriginal: string;
-  ExposureTime: number;
-  FNumber: number;
-  ISO: number;
-  FocalLength: number;
-  LensModel?: string;
-}
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {

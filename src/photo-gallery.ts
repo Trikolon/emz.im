@@ -1,6 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import "./lightbox-dialog";
+import { PhotoMetadata } from "./types";
 
 import reflections from "./assets/photos/reflections.avif";
 import reflectionsMeta from "./assets/photos/reflections.json";
@@ -26,15 +27,6 @@ import mutedSky from "./assets/photos/muted-sky.avif";
 import mutedSkyMeta from "./assets/photos/muted-sky.json";
 import oulu from "./assets/photos/oulu.avif";
 import ouluMeta from "./assets/photos/oulu.json";
-
-interface PhotoMetadata {
-  DateTimeOriginal: string;
-  ExposureTime: number;
-  FNumber: number;
-  ISO: number;
-  FocalLength: number;
-  LensModel?: string;
-}
 
 interface GalleryImage {
   src: string;
