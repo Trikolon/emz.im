@@ -1,26 +1,40 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
+import "./lightbox-dialog";
+import { PhotoMetadata } from "./types";
 
 import reflections from "./assets/photos/reflections.avif";
+import reflectionsMeta from "./assets/photos/reflections.json";
 import montreal from "./assets/photos/montreal.avif";
+import montrealMeta from "./assets/photos/montreal.json";
 import asiaWok from "./assets/photos/asia-wok.avif";
+import asiaWokMeta from "./assets/photos/asia-wok.json";
 import shadesOfBlue from "./assets/photos/shades-of-blue.avif";
+import shadesOfBlueMeta from "./assets/photos/shades-of-blue.json";
 import surveillance from "./assets/photos/surveillance.avif";
+import surveillanceMeta from "./assets/photos/surveillance.json";
 import tempelhof from "./assets/photos/tempelhof.avif";
+import tempelhofMeta from "./assets/photos/tempelhof.json";
 import teufelsberg from "./assets/photos/teufelsberg.avif";
+import teufelsbergMeta from "./assets/photos/teufelsberg.json";
 import vancouver from "./assets/photos/vancouver.avif";
+import vancouverMeta from "./assets/photos/vancouver.json";
 import windows from "./assets/photos/windows.avif";
+import windowsMeta from "./assets/photos/windows.json";
 import vienna from "./assets/photos/vienna.avif";
+import viennaMeta from "./assets/photos/vienna.json";
 import mutedSky from "./assets/photos/muted-sky.avif";
+import mutedSkyMeta from "./assets/photos/muted-sky.json";
 import oulu from "./assets/photos/oulu.avif";
+import ouluMeta from "./assets/photos/oulu.json";
 
 interface GalleryImage {
   src: string;
   alt: string;
   caption: string;
   date?: Date;
-  // Optional field to tweak position of the gallery preview image.
   position?: string;
+  metadata?: PhotoMetadata;
 }
 
 @customElement("photo-gallery")
@@ -30,75 +44,87 @@ export class PhotoGallery extends LitElement {
       src: reflections,
       alt: "Reflection of bare trees on a calm water surface, with patches of snow visible along the edge.",
       caption: "Reflections",
-      date: new Date("2025-01-01"),
+      date: new Date(reflectionsMeta.DateTimeOriginal),
+      metadata: reflectionsMeta,
     },
     {
       src: asiaWok,
       alt: 'A small Asian restaurant named "Asia Wok" with an illuminated sign, located on a dimly lit street corner at night.',
       caption: "Asia Wok",
-      date: new Date("2024-01-01"),
+      date: new Date(asiaWokMeta.DateTimeOriginal),
+      metadata: asiaWokMeta,
     },
     {
       src: surveillance,
       alt: "Surveillance camera mounted on a structure, lit by a bright light. Bird spikes are visible near the camera. A dark screen is partially visible in the foreground. Ceiling with grid pattern overhead.",
       caption: "Surveillance",
-      date: new Date("2024-01-01"),
+      date: new Date(surveillanceMeta.DateTimeOriginal),
+      metadata: surveillanceMeta,
     },
     {
       src: montreal,
       alt: "Foggy cityscape with modern high-rise buildings partially obscured by mist.",
       caption: "Montreal",
-      date: new Date("2023-01-01"),
+      date: new Date(montrealMeta.DateTimeOriginal),
+      metadata: montrealMeta,
     },
     {
       src: shadesOfBlue,
       alt: "A vast ocean view with shades of turquoise water under a bright blue sky. A small sailboat is visible on the right horizon, and a few wispy clouds stretch across the sky.",
       caption: "Shades of Blue",
-      date: new Date("2023-01-01"),
+      date: new Date(shadesOfBlueMeta.DateTimeOriginal),
+      metadata: shadesOfBlueMeta,
     },
     {
       src: vienna,
       alt: "A street view of a building featuring a shop with a metal shutter painted with a cartoonish bear-like creature. The sign above reads Juwelen, and the door and windows are adorned with graffiti. The sidewalk is made of stone tiles.",
       caption: "Vienna",
-      date: new Date("2023-01-01"),
+      date: new Date(viennaMeta.DateTimeOriginal),
+      metadata: viennaMeta,
     },
     {
       src: vancouver,
       alt: "A cityscape featuring a tower with a circular observation deck displaying a Canadian flag. The tower is framed by modern high-rise buildings with reflective glass windows under a clear blue sky.",
       caption: "Vancouver",
-      date: new Date("2022-01-01"),
+      date: new Date(vancouverMeta.DateTimeOriginal),
+      metadata: vancouverMeta,
     },
     {
       src: windows,
       alt: "A modern building with large reflective windows is angled against a bright blue sky with a few white clouds. The structure appears to be made of concrete or a similar material, showcasing a geometric design.",
       caption: "Windows",
-      date: new Date("2022-01-01"),
+      date: new Date(windowsMeta.DateTimeOriginal),
+      metadata: windowsMeta,
     },
     {
       src: teufelsberg,
       alt: "Aerial view of a vast green forest under a partly cloudy sky. Sunlight streams through clouds, illuminating patches of the forest. Two geodesic dome structures are visible on a hill to the left. A distant body of water is seen on the horizon.",
       caption: "Teufelsberg",
       position: "left center",
-      date: new Date("2021-01-01"),
+      date: new Date(teufelsbergMeta.DateTimeOriginal),
+      metadata: teufelsbergMeta,
     },
     {
       src: mutedSky,
       alt: "Dark gray storm clouds loom over a landscape with trees and a field. The trees are lush and green, contrasting with the dramatic sky, suggesting an impending storm.",
       caption: "Muted Sky",
       position: "center bottom",
-      date: new Date("2021-01-01"),
+      date: new Date(mutedSkyMeta.DateTimeOriginal),
+      metadata: mutedSkyMeta,
     },
     {
       src: tempelhof,
       alt: "A vast field of golden grass under a clear blue sky as the sun sets. In the distance, a citys skyline is visible with various buildings and towers. The scene is peaceful and illuminated by warm, golden light.",
       caption: "Tempelhof",
-      date: new Date("2018-01-01"),
+      date: new Date(tempelhofMeta.DateTimeOriginal),
+      metadata: tempelhofMeta,
     },
     {
       src: oulu,
       alt: "Upward view of a staircase leading to a small structure with a flagpole on top. The sky is clear and blue, and the perspective highlights the symmetry and linearity of the stairs and railings.",
       caption: "Oulu",
-      date: new Date("2017-01-01"),
+      date: new Date(ouluMeta.DateTimeOriginal),
+      metadata: ouluMeta,
     },
   ];
 
@@ -196,15 +222,27 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
+   * Handles opening the lightbox when an image is clicked
+   */
+  private handleImageClick(e: Event, image: GalleryImage) {
+    e.preventDefault();
+    const lightbox = this.renderRoot.querySelector("lightbox-dialog");
+    if (lightbox) {
+      lightbox.src = image.src;
+      lightbox.alt = image.alt;
+      lightbox.title = this.getImageTitle(image);
+      lightbox.metadata = image.metadata;
+      lightbox.show();
+    }
+  }
+
+  /**
    * Renders a single gallery item with image and caption
-   *
-   * @param image - The gallery image object to render
-   * @returns Template for a gallery item
    */
   private renderGalleryItem(image: GalleryImage) {
     return html`
       <div class="gallery-item">
-        <a href="${image.src}" target="_blank" rel="noopener">
+        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, image)}">
           <img
             src="${image.src}"
             alt="${image.alt}"
@@ -237,6 +275,7 @@ export class PhotoGallery extends LitElement {
 
     return html`
       <div class="gallery"> ${sortedImages.map((image) => this.renderGalleryItem(image))} </div>
+      <lightbox-dialog></lightbox-dialog>
     `;
   }
 }
