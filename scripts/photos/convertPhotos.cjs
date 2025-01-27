@@ -15,10 +15,24 @@ const REPO_ROOT = path.join(SCRIPT_DIR, '../..');
 const SOURCE_DIR = path.join(SCRIPT_DIR, 'src');
 const DEST_DIR = path.join(REPO_ROOT, 'src/assets/photos');
 
-// TODO: Only extract metadata which we actually use later.
+// Only extract the metadata fields we use in the photo gallery.
+const METADATA_FIELDS = [
+    'DateTimeOriginal',
+    'ExposureTime',
+    'FNumber',
+    'ISO',
+    'FocalLength',
+    'LensModel'
+];
+
 async function extractMetadata(sourcePath, metadataPath, filename) {
     try {
-        const metadata = await exifr.parse(sourcePath);
+        const metadata = await exifr.parse(sourcePath, {
+            pick: METADATA_FIELDS,
+            // Ensure numeric values are returned as numbers
+            numeric: true
+        });
+        
         if (metadata) {
             await fs.writeFile(
                 metadataPath,
