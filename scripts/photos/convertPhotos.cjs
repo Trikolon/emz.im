@@ -1,15 +1,39 @@
 #!/usr/bin/env node
 
-const sharp = require("sharp");
+/**
+ * This script converts photos from a source directory to an optimized format.
+ * It processes images in parallel using worker threads for better performance.
+ *
+ * For each source image, it:
+ * - Creates a full-size optimized version
+ * - Creates a thumbnail version
+ * - Extracts relevant EXIF metadata and saves it as JSON
+ *
+ * The script uses a configurable number of worker threads based on CPU cores,
+ * with each worker handling the conversion and metadata extraction for assigned images.
+ *
+ * Configuration includes:
+ * - Quality settings for full-size and thumbnail images
+ * - Output format
+ * - Thumbnail dimensions
+ * - Which EXIF metadata fields to extract
+ *
+ * Output files are organized in separate directories for:
+ * - Full-size converted images
+ * - Thumbnails
+ * - Metadata JSON files
+ */
+
 const path = require("path");
 const fs = require("fs/promises");
-const exifr = require("exifr");
+const { Worker } = require("worker_threads");
+const os = require("os");
 
 // Configuration
 const QUALITY = 70;
 const THUMBNAIL_QUALITY = 60;
 const DEST_FORMAT = "avif";
-const THUMBNAIL_WIDTH = 600; // 2x the display size for high DPI
+const THUMBNAIL_WIDTH = 600;
 
 // Get the repository root directory (parent of scripts directory)
 const SCRIPT_DIR = __dirname;
@@ -35,89 +59,101 @@ const METADATA_FIELDS = [
   "LensModel",
 ];
 
+// Number of worker threads to use (leave some cores free for system)
+const WORKER_COUNT = Math.max(1, os.cpus().length - 1);
+
 /**
- * Extracts relevant EXIF metadata from a photo and saves it to a JSON file.
- * @param {string} sourcePath - Path to the source image file
- * @param {string} metadataPath - Path where the metadata JSON should be saved
- * @param {string} filename - Original filename for logging purposes
+ * Creates and initializes a new worker thread
+ * @returns {Promise<Worker>} A promise that resolves to an initialized worker
+ */
+async function createWorker() {
+  const worker = new Worker(path.join(__dirname, "convertWorker.cjs"));
+
+  worker.postMessage({
+    type: "init",
+    config: {
+      QUALITY,
+      THUMBNAIL_QUALITY,
+      DEST_FORMAT,
+      THUMBNAIL_WIDTH,
+      SOURCE_DIR,
+      FULL_SIZE_DIR,
+      THUMBNAIL_DIR,
+      META_DIR,
+      METADATA_FIELDS,
+    },
+  });
+
+  return new Promise((resolve) => {
+    worker.once("message", (message) => {
+      if (message.type === "ready") resolve(worker);
+    });
+  });
+}
+
+/**
+ * Processes image files using a pool of worker threads
+ * @param {string[]} files - Array of image file names to process
  * @returns {Promise<void>}
  */
-async function extractMetadata(sourcePath, metadataPath, filename) {
-  try {
-    const metadata = await exifr.parse(sourcePath, {
-      pick: METADATA_FIELDS,
-      // Ensure numeric values are returned as numbers
-      numeric: true,
-    });
+async function processWithWorkers(files) {
+  console.info(`Processing with ${WORKER_COUNT} workers`);
 
-    if (metadata) {
-      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
-      console.info(`Metadata saved to ${metadataPath}`);
-    }
-  } catch (exifError) {
-    console.warn(`Warning: Could not extract metadata from ${filename}:`, exifError.message);
+  // Create worker pool
+  const workers = await Promise.all(
+    Array(WORKER_COUNT)
+      .fill()
+      .map(() => createWorker()),
+  );
+
+  const results = [];
+  let nextFileIndex = 0;
+  let completedFiles = 0;
+
+  // Process files using available workers
+  await new Promise((resolve, reject) => {
+    workers.forEach((worker) => {
+      worker.on("message", (message) => {
+        if (message.type === "done") {
+          results.push(message);
+          completedFiles++;
+
+          // Log progress
+          const percent = Math.round((completedFiles / files.length) * 100);
+          console.info(`Progress: ${completedFiles}/${files.length} (${percent}%)`);
+
+          // Process next file if available
+          if (nextFileIndex < files.length) {
+            worker.postMessage({ type: "process", file: files[nextFileIndex++] });
+          } else if (completedFiles === files.length) {
+            resolve();
+          }
+        }
+      });
+
+      worker.on("error", reject);
+
+      // Start initial file processing
+      if (nextFileIndex < files.length) {
+        worker.postMessage({ type: "process", file: files[nextFileIndex++] });
+      }
+    });
+  });
+
+  // Clean up workers
+  await Promise.all(workers.map((worker) => worker.terminate()));
+
+  // Report failures
+  const failed = results.filter((r) => !r.success);
+  if (failed.length > 0) {
+    console.warn(`\nFailed to process ${failed.length} files:`);
+    failed.forEach((f) => console.warn(`- ${f.file}: ${f.error}`));
   }
 }
 
 /**
- * Converts an image to the configured output format with specified options.
- * @param {string} sourcePath - Path to the source image file
- * @param {string} outputPath - Path where the converted image should be saved
- * @param {Object} options - Conversion options
- * @param {number} [options.width] - Target width for resizing
- * @param {number} [options.quality] - Quality setting (1-100)
- * @returns {Promise<void>}
- */
-async function convertImage(sourcePath, outputPath, options = {}) {
-  console.info(`Converting to ${outputPath}`);
-  let pipeline = sharp(sourcePath);
-
-  if (options.width) {
-    pipeline = pipeline.resize(options.width, null, {
-      withoutEnlargement: true,
-      fit: "inside",
-    });
-  }
-
-  await pipeline
-    .avif({
-      quality: options.quality || QUALITY,
-    })
-    .toFile(outputPath);
-}
-
-/**
- * Processes a single image file - creates full-size version, thumbnail, and extracts metadata.
- * @param {string} file - Name of the file to process
- * @returns {Promise<void>}
- */
-async function processFile(file) {
-  const newname = file
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/\.[^/.]+$/, "");
-
-  const sourcePath = path.join(SOURCE_DIR, file);
-  const fullSizePath = path.join(FULL_SIZE_DIR, `${newname}.${DEST_FORMAT}`);
-  const thumbnailPath = path.join(THUMBNAIL_DIR, `${newname}.${DEST_FORMAT}`);
-  const metadataPath = path.join(META_DIR, `${newname}.json`);
-
-  console.info(`Processing ${sourcePath}`);
-
-  // Run metadata extraction and both conversions in parallel
-  await Promise.all([
-    extractMetadata(sourcePath, metadataPath, file),
-    convertImage(sourcePath, fullSizePath),
-    convertImage(sourcePath, thumbnailPath, {
-      width: THUMBNAIL_WIDTH,
-      quality: THUMBNAIL_QUALITY,
-    }),
-  ]);
-}
-
-/**
- * Main function that processes all photos in the source directory.
- * Creates converted versions in full size and thumbnail size, and extracts metadata.
+ * Main function to convert photos from source directory to destination formats
+ * Creates full-size images, thumbnails, and extracts metadata
  * @returns {Promise<void>}
  */
 async function convertPhotos() {
@@ -128,6 +164,7 @@ async function convertPhotos() {
     await fs.mkdir(META_DIR, { recursive: true });
 
     console.info(`Converting images to ${DEST_FORMAT}`);
+    console.info(`Using ${WORKER_COUNT} worker threads`);
     console.info(`Full size quality: ${QUALITY}`);
     console.info(`Thumbnail quality: ${THUMBNAIL_QUALITY}`);
     console.info(`Thumbnail width: ${THUMBNAIL_WIDTH}px`);
@@ -136,10 +173,9 @@ async function convertPhotos() {
     const files = await fs.readdir(SOURCE_DIR);
     const imageFiles = files.filter((file) => !file.startsWith("."));
 
-    // Process all files in parallel
-    await Promise.all(imageFiles.map((file) => processFile(file)));
+    await processWithWorkers(imageFiles);
 
-    console.info("Conversion completed successfully");
+    console.info("\nConversion completed successfully");
   } catch (error) {
     console.error("Error during conversion:", error);
     process.exit(1);
