@@ -3,33 +3,57 @@ import { customElement } from "lit/decorators.js";
 import "./lightbox-dialog";
 import { PhotoMetadata } from "./types";
 
-import reflections from "./assets/photos/reflections.avif";
-import reflectionsMeta from "./assets/photos/reflections.json";
-import montreal from "./assets/photos/montreal.avif";
-import montrealMeta from "./assets/photos/montreal.json";
-import asiaWok from "./assets/photos/asia-wok.avif";
-import asiaWokMeta from "./assets/photos/asia-wok.json";
-import shadesOfBlue from "./assets/photos/shades-of-blue.avif";
-import shadesOfBlueMeta from "./assets/photos/shades-of-blue.json";
-import surveillance from "./assets/photos/surveillance.avif";
-import surveillanceMeta from "./assets/photos/surveillance.json";
-import tempelhof from "./assets/photos/tempelhof.avif";
-import tempelhofMeta from "./assets/photos/tempelhof.json";
-import teufelsberg from "./assets/photos/teufelsberg.avif";
-import teufelsbergMeta from "./assets/photos/teufelsberg.json";
-import vancouver from "./assets/photos/vancouver.avif";
-import vancouverMeta from "./assets/photos/vancouver.json";
-import windows from "./assets/photos/windows.avif";
-import windowsMeta from "./assets/photos/windows.json";
-import vienna from "./assets/photos/vienna.avif";
-import viennaMeta from "./assets/photos/vienna.json";
-import mutedSky from "./assets/photos/muted-sky.avif";
-import mutedSkyMeta from "./assets/photos/muted-sky.json";
-import oulu from "./assets/photos/oulu.avif";
-import ouluMeta from "./assets/photos/oulu.json";
+import reflections from "./assets/photos/full-size/reflections.avif";
+import reflectionsThumbnail from "./assets/photos/thumbnails/reflections.avif";
+import reflectionsMeta from "./assets/photos/meta/reflections.json";
+
+import montreal from "./assets/photos/full-size/montreal.avif";
+import montrealThumbnail from "./assets/photos/thumbnails/montreal.avif";
+import montrealMeta from "./assets/photos/meta/montreal.json";
+
+import asiaWok from "./assets/photos/full-size/asia-wok.avif";
+import asiaWokThumbnail from "./assets/photos/thumbnails/asia-wok.avif";
+import asiaWokMeta from "./assets/photos/meta/asia-wok.json";
+
+import shadesOfBlue from "./assets/photos/full-size/shades-of-blue.avif";
+import shadesOfBlueThumbnail from "./assets/photos/thumbnails/shades-of-blue.avif";
+import shadesOfBlueMeta from "./assets/photos/meta/shades-of-blue.json";
+
+import surveillance from "./assets/photos/full-size/surveillance.avif";
+import surveillanceThumbnail from "./assets/photos/thumbnails/surveillance.avif";
+import surveillanceMeta from "./assets/photos/meta/surveillance.json";
+
+import tempelhof from "./assets/photos/full-size/tempelhof.avif";
+import tempelhofThumbnail from "./assets/photos/thumbnails/tempelhof.avif";
+import tempelhofMeta from "./assets/photos/meta/tempelhof.json";
+
+import teufelsberg from "./assets/photos/full-size/teufelsberg.avif";
+import teufelsbergThumbnail from "./assets/photos/thumbnails/teufelsberg.avif";
+import teufelsbergMeta from "./assets/photos/meta/teufelsberg.json";
+
+import vancouver from "./assets/photos/full-size/vancouver.avif";
+import vancouverThumbnail from "./assets/photos/thumbnails/vancouver.avif";
+import vancouverMeta from "./assets/photos/meta/vancouver.json";
+
+import windows from "./assets/photos/full-size/windows.avif";
+import windowsThumbnail from "./assets/photos/thumbnails/windows.avif";
+import windowsMeta from "./assets/photos/meta/windows.json";
+
+import vienna from "./assets/photos/full-size/vienna.avif";
+import viennaThumbnail from "./assets/photos/thumbnails/vienna.avif";
+import viennaMeta from "./assets/photos/meta/vienna.json";
+
+import mutedSky from "./assets/photos/full-size/muted-sky.avif";
+import mutedSkyThumbnail from "./assets/photos/thumbnails/muted-sky.avif";
+import mutedSkyMeta from "./assets/photos/meta/muted-sky.json";
+
+import oulu from "./assets/photos/full-size/oulu.avif";
+import ouluThumbnail from "./assets/photos/thumbnails/oulu.avif";
+import ouluMeta from "./assets/photos/meta/oulu.json";
 
 interface GalleryImage {
   src: string;
+  thumbnail: string;
   alt: string;
   caption: string;
   date?: Date;
@@ -42,6 +66,7 @@ export class PhotoGallery extends LitElement {
   private images: GalleryImage[] = [
     {
       src: reflections,
+      thumbnail: reflectionsThumbnail,
       alt: "Reflection of bare trees on a calm water surface, with patches of snow visible along the edge.",
       caption: "Reflections",
       date: new Date(reflectionsMeta.DateTimeOriginal),
@@ -49,6 +74,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: asiaWok,
+      thumbnail: asiaWokThumbnail,
       alt: 'A small Asian restaurant named "Asia Wok" with an illuminated sign, located on a dimly lit street corner at night.',
       caption: "Asia Wok",
       date: new Date(asiaWokMeta.DateTimeOriginal),
@@ -56,6 +82,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: surveillance,
+      thumbnail: surveillanceThumbnail,
       alt: "Surveillance camera mounted on a structure, lit by a bright light. Bird spikes are visible near the camera. A dark screen is partially visible in the foreground. Ceiling with grid pattern overhead.",
       caption: "Surveillance",
       date: new Date(surveillanceMeta.DateTimeOriginal),
@@ -63,6 +90,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: montreal,
+      thumbnail: montrealThumbnail,
       alt: "Foggy cityscape with modern high-rise buildings partially obscured by mist.",
       caption: "Montreal",
       date: new Date(montrealMeta.DateTimeOriginal),
@@ -70,6 +98,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: shadesOfBlue,
+      thumbnail: shadesOfBlueThumbnail,
       alt: "A vast ocean view with shades of turquoise water under a bright blue sky. A small sailboat is visible on the right horizon, and a few wispy clouds stretch across the sky.",
       caption: "Shades of Blue",
       date: new Date(shadesOfBlueMeta.DateTimeOriginal),
@@ -77,6 +106,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: vienna,
+      thumbnail: viennaThumbnail,
       alt: "A street view of a building featuring a shop with a metal shutter painted with a cartoonish bear-like creature. The sign above reads Juwelen, and the door and windows are adorned with graffiti. The sidewalk is made of stone tiles.",
       caption: "Vienna",
       date: new Date(viennaMeta.DateTimeOriginal),
@@ -84,6 +114,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: vancouver,
+      thumbnail: vancouverThumbnail,
       alt: "A cityscape featuring a tower with a circular observation deck displaying a Canadian flag. The tower is framed by modern high-rise buildings with reflective glass windows under a clear blue sky.",
       caption: "Vancouver",
       date: new Date(vancouverMeta.DateTimeOriginal),
@@ -91,6 +122,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: windows,
+      thumbnail: windowsThumbnail,
       alt: "A modern building with large reflective windows is angled against a bright blue sky with a few white clouds. The structure appears to be made of concrete or a similar material, showcasing a geometric design.",
       caption: "Windows",
       date: new Date(windowsMeta.DateTimeOriginal),
@@ -98,6 +130,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: teufelsberg,
+      thumbnail: teufelsbergThumbnail,
       alt: "Aerial view of a vast green forest under a partly cloudy sky. Sunlight streams through clouds, illuminating patches of the forest. Two geodesic dome structures are visible on a hill to the left. A distant body of water is seen on the horizon.",
       caption: "Teufelsberg",
       position: "left center",
@@ -106,6 +139,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: mutedSky,
+      thumbnail: mutedSkyThumbnail,
       alt: "Dark gray storm clouds loom over a landscape with trees and a field. The trees are lush and green, contrasting with the dramatic sky, suggesting an impending storm.",
       caption: "Muted Sky",
       position: "center bottom",
@@ -114,6 +148,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: tempelhof,
+      thumbnail: tempelhofThumbnail,
       alt: "A vast field of golden grass under a clear blue sky as the sun sets. In the distance, a citys skyline is visible with various buildings and towers. The scene is peaceful and illuminated by warm, golden light.",
       caption: "Tempelhof",
       date: new Date(tempelhofMeta.DateTimeOriginal),
@@ -121,6 +156,7 @@ export class PhotoGallery extends LitElement {
     },
     {
       src: oulu,
+      thumbnail: ouluThumbnail,
       alt: "Upward view of a staircase leading to a small structure with a flagpole on top. The sky is clear and blue, and the perspective highlights the symmetry and linearity of the stairs and railings.",
       caption: "Oulu",
       date: new Date(ouluMeta.DateTimeOriginal),
@@ -244,7 +280,7 @@ export class PhotoGallery extends LitElement {
       <div class="gallery-item">
         <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, image)}">
           <img
-            src="${image.src}"
+            src="${image.thumbnail}"
             alt="${image.alt}"
             title="${this.getImageTitle(image)}"
             loading="lazy"
