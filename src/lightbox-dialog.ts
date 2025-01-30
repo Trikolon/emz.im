@@ -126,23 +126,22 @@ export class LightboxDialog extends LitElement {
     this.showInfo = !this.showInfo;
   }
 
-  private handleClose() {
-    const dialog = this.renderRoot.querySelector("dialog");
-    if (dialog) {
-      dialog.close();
-      this.showInfo = false;
-    }
-  }
-
-  private handleDialogClick(e: MouseEvent) {
+  private onCloseButtonClick(e: MouseEvent) {
     if (e.target === e.currentTarget) {
-      const dialog = e.currentTarget as HTMLDialogElement;
-      dialog.close();
-      this.showInfo = false;
+      const dialog = this.renderRoot.querySelector("dialog");
+      if (dialog) {
+        dialog.close();
+      }
     }
   }
 
-  private handleImageLoad() {
+  private onDialogClose() {
+    this.showInfo = false;
+    this.isLoading = false;
+    this.showLoadingSpinner = false;
+  }
+
+  private onImageLoad() {
     this.isLoading = false;
     this.showLoadingSpinner = false;
   }
@@ -150,6 +149,14 @@ export class LightboxDialog extends LitElement {
   show() {
     const dialog = this.renderRoot.querySelector("dialog");
     if (dialog) {
+      // Reset loading states before showing dialog
+      const img = this.renderRoot.querySelector("img");
+      if (img) {
+        // Force reload of image by clearing src
+        img.src = "";
+        img.src = this.src;
+      }
+
       dialog.showModal();
       this.isLoading = true;
       this.showLoadingSpinner = false;
@@ -165,9 +172,9 @@ export class LightboxDialog extends LitElement {
 
   render() {
     return html`
-      <dialog @click="${this.handleDialogClick}">
+      <dialog @click="${this.onCloseButtonClick}" @close="${this.onDialogClose}">
         <div class="controls">
-          <button @click="${this.handleClose}" title="Close">close</button>
+          <button @click="${this.onCloseButtonClick}" title="Close">close</button>
           <button @click="${this.toggleInfo}" title="Show photo info">info</button>
         </div>
         ${this.showLoadingSpinner
@@ -181,7 +188,7 @@ export class LightboxDialog extends LitElement {
           src="${this.src}"
           alt="${this.alt}"
           title="${this.title}"
-          @load="${this.handleImageLoad}"
+          @load="${this.onImageLoad}"
           class="${this.isLoading ? "" : "loaded"}"
         />
         <photo-info-panel .metadata="${this.metadata}" ?show="${this.showInfo}"></photo-info-panel>
