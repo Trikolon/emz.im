@@ -49,6 +49,12 @@ export class LightboxDialog extends LitElement {
       transition: opacity 0.3s ease-out;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      img {
+        transition: none;
+      }
+    }
+
     img.loaded {
       opacity: 1;
     }
