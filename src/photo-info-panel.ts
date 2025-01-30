@@ -100,14 +100,10 @@ export class PhotoInfoPanel extends LitElement {
             <span class="info-label">Focal Length</span>
             <span class="info-value"> ${this.formatFocalLength(this.metadata.FocalLength)} </span>
           </div>
-          ${this.metadata.LensModel
-            ? html`
-                <div class="info-item">
-                  <span class="info-label">Lens</span>
-                  <span class="info-value">${this.metadata.LensModel}</span>
-                </div>
-              `
-            : null}
+          <div class="info-item">
+            <span class="info-label">Lens</span>
+            <span class="info-value">${this.metadata.LensModel ?? "—"}</span>
+          </div>
         </div>
       </div>
     `;
