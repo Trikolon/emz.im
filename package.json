@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "prettier": "prettier --config .prettierrc '{src,scripts}/**/*.{ts,js,cjs}' --write",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
