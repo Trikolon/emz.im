@@ -35,6 +35,13 @@ const METADATA_FIELDS = [
     'LensModel'
 ];
 
+/**
+ * Extracts relevant EXIF metadata from a photo and saves it to a JSON file.
+ * @param {string} sourcePath - Path to the source image file
+ * @param {string} metadataPath - Path where the metadata JSON should be saved
+ * @param {string} filename - Original filename for logging purposes
+ * @returns {Promise<void>}
+ */
 async function extractMetadata(sourcePath, metadataPath, filename) {
     try {
         const metadata = await exifr.parse(sourcePath, {
@@ -55,6 +62,15 @@ async function extractMetadata(sourcePath, metadataPath, filename) {
     }
 }
 
+/**
+ * Converts an image to the configured output format with specified options.
+ * @param {string} sourcePath - Path to the source image file
+ * @param {string} outputPath - Path where the converted image should be saved
+ * @param {Object} options - Conversion options
+ * @param {number} [options.width] - Target width for resizing
+ * @param {number} [options.quality] - Quality setting (1-100)
+ * @returns {Promise<void>}
+ */
 async function convertImage(sourcePath, outputPath, options = {}) {
     console.info(`Converting to ${outputPath}`);
     let pipeline = sharp(sourcePath);
@@ -71,6 +87,11 @@ async function convertImage(sourcePath, outputPath, options = {}) {
     }).toFile(outputPath);
 }
 
+/**
+ * Processes a single image file - creates full-size version, thumbnail, and extracts metadata.
+ * @param {string} file - Name of the file to process
+ * @returns {Promise<void>}
+ */
 async function processFile(file) {
     const newname = file
         .toLowerCase()
@@ -95,6 +116,11 @@ async function processFile(file) {
     ]);
 }
 
+/**
+ * Main function that processes all photos in the source directory.
+ * Creates converted versions in full size and thumbnail size, and extracts metadata.
+ * @returns {Promise<void>}
+ */
 async function convertPhotos() {
     try {
         // Create output directories if they don't exist
