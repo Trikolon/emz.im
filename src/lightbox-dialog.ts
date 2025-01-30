@@ -20,6 +20,12 @@ export class LightboxDialog extends LitElement {
   @state()
   private showInfo = false;
 
+  @state()
+  private isLoading = true;
+
+  @state()
+  private showLoadingSpinner = false;
+
   static readonly styles = css`
     dialog {
       padding: 0;
@@ -39,6 +45,12 @@ export class LightboxDialog extends LitElement {
       max-width: 95vw;
       max-height: 95vh;
       object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+
+    img.loaded {
+      opacity: 1;
     }
 
     .controls {
@@ -64,6 +76,44 @@ export class LightboxDialog extends LitElement {
     button:hover {
       opacity: 0.8;
     }
+
+    .loading-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loading-spinner {
+        animation: none;
+        /* Show a static indicator instead */
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-right-color: white;
+      }
+    }
+
+    .loading-spinner.visible {
+      opacity: 1;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   `;
 
   private toggleInfo() {
@@ -86,10 +136,24 @@ export class LightboxDialog extends LitElement {
     }
   }
 
+  private handleImageLoad() {
+    this.isLoading = false;
+    this.showLoadingSpinner = false;
+  }
+
   show() {
     const dialog = this.renderRoot.querySelector("dialog");
     if (dialog) {
       dialog.showModal();
+      this.isLoading = true;
+      this.showLoadingSpinner = false;
+
+      // Only show loading spinner if loading takes more than 100ms
+      setTimeout(() => {
+        if (this.isLoading) {
+          this.showLoadingSpinner = true;
+        }
+      }, 100);
     }
   }
 
@@ -100,7 +164,20 @@ export class LightboxDialog extends LitElement {
           <button @click="${this.handleClose}" title="Close">close</button>
           <button @click="${this.toggleInfo}" title="Show photo info">info</button>
         </div>
-        <img src="${this.src}" alt="${this.alt}" title="${this.title}" />
+        ${this.showLoadingSpinner
+          ? html`
+              <div class="loading-container">
+                <div class="loading-spinner ${this.showLoadingSpinner ? "visible" : ""}"></div>
+              </div>
+            `
+          : ""}
+        <img
+          src="${this.src}"
+          alt="${this.alt}"
+          title="${this.title}"
+          @load="${this.handleImageLoad}"
+          class="${this.isLoading ? "" : "loaded"}"
+        />
         <photo-info-panel .metadata="${this.metadata}" ?show="${this.showInfo}"></photo-info-panel>
       </dialog>
     `;
