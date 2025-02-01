@@ -36,6 +36,10 @@ export class PixelCat extends LitElement {
   private preloadedAnimations: HTMLImageElement[] = [];
 
   static readonly styles = css`
+    :host {
+      cursor: pointer;
+    }
+
     :host([hidden]) {
       display: none;
     }
@@ -46,7 +50,7 @@ export class PixelCat extends LitElement {
       height: auto;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      cursor: pointer;
+      /* cursor: pointer; */
     }
   `;
 
