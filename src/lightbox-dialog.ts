@@ -143,13 +143,12 @@ export class LightboxDialog extends LitElement {
     }
   }
 
-  private onDialogClose() {
-    this.showInfo = false;
-    this.isLoading = false;
-    this.showLoadingSpinner = false;
+  private disablePageScroll() {
+    document.body.style.overflow = "hidden";
+  }
 
-    // Clear src when closing so on next open we don't see the previous image.
-    this.src = "";
+  private enablePageScroll() {
+    document.body.style.overflow = "";
   }
 
   private onImageLoad() {
@@ -163,6 +162,8 @@ export class LightboxDialog extends LitElement {
       this.isLoading = true;
       this.showLoadingSpinner = false;
 
+      // Disable page scroll while the dialog is open.
+      this.disablePageScroll();
       dialog.showModal();
 
       // Only show loading spinner if loading takes more than 100ms
@@ -205,6 +206,16 @@ export class LightboxDialog extends LitElement {
         <photo-info-panel .metadata="${this.metadata}" ?show="${this.showInfo}"></photo-info-panel>
       </dialog>
     `;
+  }
+
+  private onDialogClose() {
+    this.showInfo = false;
+    this.isLoading = false;
+    this.showLoadingSpinner = false;
+    this.enablePageScroll();
+
+    // Clear src when closing so on next open we don't see the previous image.
+    this.src = "";
   }
 }
 
