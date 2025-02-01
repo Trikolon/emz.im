@@ -176,7 +176,11 @@ export class LightboxDialog extends LitElement {
 
   render() {
     return html`
-      <dialog @click="${this.onCloseButtonClick}" @close="${this.onDialogClose}">
+      <dialog
+        @click="${this.onCloseButtonClick}"
+        @close="${this.onDialogClose}"
+        aria-label="Photo Lightbox: ${this.title}"
+      >
         <div class="controls">
           <button @click="${this.onCloseButtonClick}" title="Close">close</button>
           <button @click="${this.toggleInfo}" title="Show photo info">info</button>
