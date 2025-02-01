@@ -2,6 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { PhotoMetadata } from "./types";
 import "./photo-info-panel";
+import { classMap } from "lit/directives/class-map.js";
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {
@@ -30,10 +31,18 @@ export class LightboxDialog extends LitElement {
     dialog {
       padding: 0;
       border: none;
-      background: rgba(0, 0, 0, 0.9);
       max-width: 95vw;
       max-height: 95vh;
       color: white;
+
+      /* Set dimensions explicitly when the image is loading to avoid layout
+      issues with the loading spinner */
+      &:not(:has(img.loaded)) {
+        width: 95vw;
+        height: 95vh;
+      }
+
+      background: transparent;
     }
 
     dialog::backdrop {
@@ -88,6 +97,11 @@ export class LightboxDialog extends LitElement {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    .loading-container.visible {
+      display: block;
     }
 
     .loading-spinner {
@@ -97,8 +111,6 @@ export class LightboxDialog extends LitElement {
       border-radius: 50%;
       border-top-color: white;
       animation: spin 1s ease-in-out infinite;
-      opacity: 0;
-      transition: opacity 0.2s;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -109,10 +121,6 @@ export class LightboxDialog extends LitElement {
         border-top-color: white;
         border-right-color: white;
       }
-    }
-
-    .loading-spinner.visible {
-      opacity: 1;
     }
 
     @keyframes spin {
@@ -139,6 +147,9 @@ export class LightboxDialog extends LitElement {
     this.showInfo = false;
     this.isLoading = false;
     this.showLoadingSpinner = false;
+
+    // Clear src when closing so on next open we don't see the previous image.
+    this.src = "";
   }
 
   private onImageLoad() {
@@ -149,17 +160,10 @@ export class LightboxDialog extends LitElement {
   show() {
     const dialog = this.renderRoot.querySelector("dialog");
     if (dialog) {
-      // Reset loading states before showing dialog
-      const img = this.renderRoot.querySelector("img");
-      if (img) {
-        // Force reload of image by clearing src
-        img.src = "";
-        img.src = this.src;
-      }
-
-      dialog.showModal();
       this.isLoading = true;
       this.showLoadingSpinner = false;
+
+      dialog.showModal();
 
       // Only show loading spinner if loading takes more than 100ms
       setTimeout(() => {
@@ -177,19 +181,22 @@ export class LightboxDialog extends LitElement {
           <button @click="${this.onCloseButtonClick}" title="Close">close</button>
           <button @click="${this.toggleInfo}" title="Show photo info">info</button>
         </div>
-        ${this.showLoadingSpinner
-          ? html`
-              <div class="loading-container">
-                <div class="loading-spinner ${this.showLoadingSpinner ? "visible" : ""}"></div>
-              </div>
-            `
-          : ""}
+        <div
+          class=${classMap({
+            "loading-container": true,
+            visible: this.showLoadingSpinner,
+          })}
+        >
+          <div class="loading-spinner"></div>
+        </div>
         <img
           src="${this.src}"
           alt="${this.alt}"
           title="${this.title}"
           @load="${this.onImageLoad}"
-          class="${this.isLoading ? "" : "loaded"}"
+          class=${classMap({
+            loaded: !this.isLoading,
+          })}
         />
         <photo-info-panel .metadata="${this.metadata}" ?show="${this.showInfo}"></photo-info-panel>
       </dialog>
