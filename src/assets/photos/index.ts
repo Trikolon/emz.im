@@ -1,6 +1,7 @@
 import { GalleryImage } from "../../types";
 
 // Full size images
+import liminalSpace from "./full-size/liminal-space.avif";
 import reflections from "./full-size/reflections.avif";
 import asiaWok from "./full-size/asia-wok.avif";
 import montreal from "./full-size/montreal.avif";
@@ -15,6 +16,7 @@ import mutedSky from "./full-size/muted-sky.avif";
 import oulu from "./full-size/oulu.avif";
 
 // Thumbnails
+import liminalSpaceThumbnail from "./thumbnails/liminal-space.avif";
 import reflectionsThumbnail from "./thumbnails/reflections.avif";
 import asiaWokThumbnail from "./thumbnails/asia-wok.avif";
 import montrealThumbnail from "./thumbnails/montreal.avif";
@@ -29,6 +31,7 @@ import mutedSkyThumbnail from "./thumbnails/muted-sky.avif";
 import ouluThumbnail from "./thumbnails/oulu.avif";
 
 // Metadata
+import liminalSpaceMeta from "./meta/liminal-space.json";
 import reflectionsMeta from "./meta/reflections.json";
 import asiaWokMeta from "./meta/asia-wok.json";
 import montrealMeta from "./meta/montreal.json";
@@ -46,6 +49,14 @@ import ouluMeta from "./meta/oulu.json";
  * Collection of all gallery photos with their metadata
  */
 export const photos: GalleryImage[] = [
+  {
+    src: liminalSpace,
+    thumbnail: liminalSpaceThumbnail,
+    alt: "A large, empty basement with white walls and floor tiles. Square ceiling lights illuminate the space, and several dark rectangular columns are evenly spaced throughout. On two of the columns in the front there are small green emergency exit signs. In the back right corner there is a hunched down person with a winter jacket on, facing away from the camera.",
+    caption: "Liminal Space",
+    date: new Date(liminalSpaceMeta.DateTimeOriginal),
+    metadata: liminalSpaceMeta,
+  },
   {
     src: reflections,
     thumbnail: reflectionsThumbnail,
