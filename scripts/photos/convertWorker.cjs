@@ -37,12 +37,21 @@ parentPort.on("message", async (message) => {
 async function extractMetadata(sourcePath, metadataPath, filename) {
   try {
     const metadata = await exifr.parse(sourcePath, {
-      pick: config.METADATA_FIELDS,
-      numeric: true,
+      iptc: true,
     });
 
     if (metadata) {
-      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
+      // Workaround for "pick" property not working for exifr parse when
+      // including iptc fields.
+      // See https://github.com/MikeKovarik/exifr/issues/79
+      // Instead of letting exifr filter the metadata, we filter it manually.
+      // This makes parsing a bit slower, but that's acceptable for the input
+      // size.
+      const allowedFields = new Set(config.METADATA_FIELDS);
+      const filteredMetadata = Object.fromEntries(
+        Object.entries(metadata).filter(([key]) => allowedFields.has(key)),
+      );
+      await fs.writeFile(metadataPath, JSON.stringify(filteredMetadata, null, 2));
     }
   } catch (exifError) {
     console.warn(`Warning: Could not extract metadata from ${filename}:`, exifError.message);

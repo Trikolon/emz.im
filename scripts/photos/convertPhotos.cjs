@@ -57,6 +57,7 @@ const METADATA_FIELDS = [
   "ISO",
   "FocalLength",
   "LensModel",
+  "ObjectName",
 ];
 
 // Number of worker threads to use (leave some cores free for system)

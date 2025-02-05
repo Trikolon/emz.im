@@ -22,6 +22,8 @@ export interface GalleryImage {
  * EXIF and other metadata
  */
 export interface PhotoMetadata {
+  /** Photo Title */
+  ObjectName: string;
   /** Date and time the photo was taken */
   DateTimeOriginal: string;
   /** Exposure time in seconds */
