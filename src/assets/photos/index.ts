@@ -14,6 +14,9 @@ import windows from "./full-size/windows.avif";
 import vienna from "./full-size/vienna.avif";
 import mutedSky from "./full-size/muted-sky.avif";
 import oulu from "./full-size/oulu.avif";
+import fern from "./full-size/fern.avif";
+import moonOnMutedBlue from "./full-size/moon-on-muted-blue.avif";
+import skyAndBranches from "./full-size/sky-and-branches.avif";
 
 // Thumbnails
 import liminalSpaceThumbnail from "./thumbnails/liminal-space.avif";
@@ -29,6 +32,9 @@ import windowsThumbnail from "./thumbnails/windows.avif";
 import viennaThumbnail from "./thumbnails/vienna.avif";
 import mutedSkyThumbnail from "./thumbnails/muted-sky.avif";
 import ouluThumbnail from "./thumbnails/oulu.avif";
+import fernThumbnail from "./thumbnails/fern.avif";
+import moonOnMutedBlueThumbnail from "./thumbnails/moon-on-muted-blue.avif";
+import skyAndBranchesThumbnail from "./thumbnails/sky-and-branches.avif";
 
 // Metadata
 import liminalSpaceMeta from "./meta/liminal-space.json";
@@ -44,6 +50,9 @@ import windowsMeta from "./meta/windows.json";
 import viennaMeta from "./meta/vienna.json";
 import mutedSkyMeta from "./meta/muted-sky.json";
 import ouluMeta from "./meta/oulu.json";
+import fernMeta from "./meta/fern.json";
+import moonOnMutedBlueMeta from "./meta/moon-on-muted-blue.json";
+import skyAndBranchesMeta from "./meta/sky-and-branches.json";
 
 /**
  * Collection of all gallery photos with their metadata
@@ -154,5 +163,29 @@ export const photos: GalleryImage[] = [
     caption: ouluMeta.ObjectName,
     date: new Date(ouluMeta.DateTimeOriginal),
     metadata: ouluMeta,
+  },
+  {
+    src: fern,
+    thumbnail: fernThumbnail,
+    alt: "A close-up of a fern leaf with its green fronds spreading out in a feather-like pattern. The leaf is backlit by soft sky light, creating a delicate, textured appearance with blurred greenery in the background.",
+    caption: fernMeta.ObjectName,
+    date: new Date(fernMeta.DateTimeOriginal),
+    metadata: fernMeta,
+  },
+  {
+    src: moonOnMutedBlue,
+    thumbnail: moonOnMutedBlueThumbnail,
+    alt: "Bare tree branches arching toward a night sky with a visible waxing gibbous moon. The branches appear intricate and almost lace-like, framing the moon in the dark, muted blue background.",
+    caption: moonOnMutedBlueMeta.ObjectName,
+    date: new Date(moonOnMutedBlueMeta.DateTimeOriginal),
+    metadata: moonOnMutedBlueMeta,
+  },
+  {
+    src: skyAndBranches,
+    thumbnail: skyAndBranchesThumbnail,
+    alt: "A silhouette of leafy branches against a bright blue sky. The shapes of the leaves are distinctly serrated, and some evergreen trees are faintly visible in the background on the left.",
+    caption: skyAndBranchesMeta.ObjectName,
+    date: new Date(skyAndBranchesMeta.DateTimeOriginal),
+    metadata: skyAndBranchesMeta,
   },
 ];
