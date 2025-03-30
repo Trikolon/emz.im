@@ -17,6 +17,7 @@ import oulu from "./full-size/oulu.avif";
 import fern from "./full-size/fern.avif";
 import moonOnMutedBlue from "./full-size/moon-on-muted-blue.avif";
 import skyAndBranches from "./full-size/sky-and-branches.avif";
+import mansfelderStrasse from "./full-size/mansfelder-strasse.avif";
 
 // Thumbnails
 import liminalSpaceThumbnail from "./thumbnails/liminal-space.avif";
@@ -35,6 +36,7 @@ import ouluThumbnail from "./thumbnails/oulu.avif";
 import fernThumbnail from "./thumbnails/fern.avif";
 import moonOnMutedBlueThumbnail from "./thumbnails/moon-on-muted-blue.avif";
 import skyAndBranchesThumbnail from "./thumbnails/sky-and-branches.avif";
+import mansfelderStrasseThumbnail from "./thumbnails/mansfelder-strasse.avif";
 
 // Metadata
 import liminalSpaceMeta from "./meta/liminal-space.json";
@@ -53,7 +55,7 @@ import ouluMeta from "./meta/oulu.json";
 import fernMeta from "./meta/fern.json";
 import moonOnMutedBlueMeta from "./meta/moon-on-muted-blue.json";
 import skyAndBranchesMeta from "./meta/sky-and-branches.json";
-
+import mansfelderStrasseMeta from "./meta/mansfelder-strasse.json";
 /**
  * Collection of all gallery photos with their metadata
  */
@@ -187,5 +189,13 @@ export const photos: GalleryImage[] = [
     caption: skyAndBranchesMeta.ObjectName,
     date: new Date(skyAndBranchesMeta.DateTimeOriginal),
     metadata: skyAndBranchesMeta,
+  },
+  {
+    src: mansfelderStrasse,
+    thumbnail: mansfelderStrasseThumbnail,
+    alt: "A close-up view of a modern high-rise building with a grid-like facade featuring square windows. The structure has staggered sections, creating a unique layered appearance. The evening sunlight casts a soft pinkish glow on the building, while a few windows are illuminated from inside. The sky in the background is clear and pale.",
+    caption: mansfelderStrasseMeta.ObjectName,
+    date: new Date(mansfelderStrasseMeta.DateTimeOriginal),
+    metadata: mansfelderStrasseMeta,
   },
 ];
