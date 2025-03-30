@@ -18,6 +18,7 @@ import fern from "./full-size/fern.avif";
 import moonOnMutedBlue from "./full-size/moon-on-muted-blue.avif";
 import skyAndBranches from "./full-size/sky-and-branches.avif";
 import mansfelderStrasse from "./full-size/mansfelder-strasse.avif";
+import halfLifeTwo from "./full-size/half-life-2.avif";
 
 // Thumbnails
 import liminalSpaceThumbnail from "./thumbnails/liminal-space.avif";
@@ -37,6 +38,7 @@ import fernThumbnail from "./thumbnails/fern.avif";
 import moonOnMutedBlueThumbnail from "./thumbnails/moon-on-muted-blue.avif";
 import skyAndBranchesThumbnail from "./thumbnails/sky-and-branches.avif";
 import mansfelderStrasseThumbnail from "./thumbnails/mansfelder-strasse.avif";
+import halfLifeTwoThumbnail from "./thumbnails/half-life-2.avif";
 
 // Metadata
 import liminalSpaceMeta from "./meta/liminal-space.json";
@@ -56,6 +58,8 @@ import fernMeta from "./meta/fern.json";
 import moonOnMutedBlueMeta from "./meta/moon-on-muted-blue.json";
 import skyAndBranchesMeta from "./meta/sky-and-branches.json";
 import mansfelderStrasseMeta from "./meta/mansfelder-strasse.json";
+import halfLifeTwoMeta from "./meta/half-life-2.json";
+
 /**
  * Collection of all gallery photos with their metadata
  */
@@ -197,5 +201,13 @@ export const photos: GalleryImage[] = [
     caption: mansfelderStrasseMeta.ObjectName,
     date: new Date(mansfelderStrasseMeta.DateTimeOriginal),
     metadata: mansfelderStrasseMeta,
+  },
+  {
+    src: halfLifeTwo,
+    thumbnail: halfLifeTwoThumbnail,
+    alt: "A tall red-and-white transmission tower stands prominently in the center of the image, surrounded by cables for stabilization. In the background, apartment buildings and residential structures are visible under a soft, golden sunset sky. Below the urban area, a dense forest stretches across the foreground. The clouds above add texture to the serene atmosphere.",
+    caption: halfLifeTwoMeta.ObjectName,
+    date: new Date(halfLifeTwoMeta.DateTimeOriginal),
+    metadata: halfLifeTwoMeta,
   },
 ];
