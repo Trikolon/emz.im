@@ -33,6 +33,14 @@ export class BlogPost extends LitElement {
     .body {
       color: var(--text-color);
       line-height: 1.6;
+      text-align: justify;
+      hyphens: auto;
+      word-break: break-word;
+    }
+
+    .body ::slotted(a) {
+      word-break: break-all;
+      white-space: normal;
     }
   `;
 
