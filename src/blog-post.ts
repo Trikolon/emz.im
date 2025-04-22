@@ -64,6 +64,9 @@ class ExternalLinksController implements ReactiveController {
 
 @customElement("blog-post")
 export class BlogPost extends LitElement {
+  // Unique identifier for the post used for fragment links.
+  @property({ type: String }) id = "";
+
   // Creation date of the post.
   @property({ type: String }) date = "";
 
@@ -86,6 +89,31 @@ export class BlogPost extends LitElement {
       color: var(--heading-color);
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
+      position: relative;
+    }
+
+    .title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Add a hash in front of the title on hover to indicate that it's a
+    fragment link */
+    .title a::before {
+      content: "#";
+      position: absolute;
+      left: -1em;
+      color: var(--text-secondary);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .title a:hover::before {
+      opacity: 1;
+    }
+
+    .title a:hover {
+      text-decoration: underline;
     }
 
     .date {
@@ -112,7 +140,9 @@ export class BlogPost extends LitElement {
     return html`
       <article class="blog-post">
         <h1 class="title">
-          <slot name="title"></slot>
+          <a href="#${this.id}">
+            <slot name="title"></slot>
+          </a>
         </h1>
         <div class="date">${new Date(this.date).toLocaleDateString()}</div>
         <div class="body">
