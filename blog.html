@@ -17,9 +17,54 @@
   </head>
   <body>
     <main>
+      <blog-post date="2025-04-22">
+        <span slot="title">Google is Scrapping Plans for Third-Party Cookie Deprecation</span>
+        <div slot="body">
+            <p>After years of pushing timelines for third-party cookie
+            deprecation and eventually watering it down to an opt-in dialog, it
+            seems Google has now fully given up on it:</p>
+
+            <p><a
+            href="https://privacysandbox.com/news/privacy-sandbox-next-steps/#:~:text=we’ve%20made%20the,and%20Security%20Settings.">Next
+            steps for Privacy Sandbox and tracking protections in Chrome</a></p>
+
+            <blockquote>
+              we’ve made the decision to maintain our current approach to
+              offering users third-party cookie choice in Chrome, and will not
+              be rolling out a new standalone prompt for third-party cookies.
+            </blockquote>
+
+            <p>This is such a huge loss for Chrome users and the web as a
+            whole.</p>
+
+            <p>They still block third-party cookies in incognito mode, but
+            that’s such a small share of browsing.</p>
+
+            <p>They also say:</p>
+
+            <blockquote>
+              Users can continue to choose the best option for themselves in
+              Chrome’s Privacy and Security Settings.
+            </blockquote>
+
+            <p>That’s nice, but only a small share of users goes into these
+            settings, let alone understands the privacy implications of
+            disabling third-party cookies.</p>
+          
+            <p>There will also be not a lot of incentive for users to turn
+            third-party cookies off, as websites which rely on them will
+            continue to break. With third-party cookies enabled for the majority
+            of users on the web, website vendors have no incentive to build
+            alternatives and ad-networks still have free reign to track
+            users.</p>
+          </div>
+      </blog-post>
       <blog-post date="2025-04-21">
         <span slot="title">From Cloud to Cloud</span>
         <div slot="body">
+          <em>A brief history of my personal cloud storage usage over the years,
+          looking for a product that's both convenient and private.</em>
+
           <p>Over the years, I've used many different personal cloud services.
           Back in school, around 2013, Dropbox was quite popular, so everybody
           used that. No fancy web interface or live editing docs, just a solid
@@ -77,23 +122,27 @@
           href="https://www.apple.com/newsroom/2022/12/apple-advances-user-security-with-powerful-new-data-protections/">announced
           Advanced Data Protection</a>, a mode in which they claim to end-to-end
           encrypt most of the sensitive photos, notes and file data, I made the
-          switch. It was the first big cloud service that offered E2E encryption.
+          switch. It was the first big cloud service that offered E2E
+          encryption.
+         </p>
+
+         <p>
           Transferring the data was painful. With Advanced Data Protection
           enabled, only Apple devices can read/write data. Since I had more data
           in Google Drive than disk size I had to stagger the uploads. Upload
           some of the data, delete parts of the local files, then upload more.
           This was a tedious process that took a couple days, not only because
-          of my slow upload speed back then.</p>
+          of my slow upload speed back then.
+         </p>
 
           <h2>Popular (Private?) Cloud Services</h2>
 
-          <p>Over the years I've always looked around for better cloud storage
-          solutions. The mainstream products often have the best features
-          (Google Drive) or better integration with the ecosystem (Apple
-          iCloud). What they lack is verifiable end-to-end encryption. Google
-          Drive doesn't offer it at all, and Apple's "Advanced Data Protection"
-          claims it encrypts at least the file contents, but since it's not open
-          source this claim can not be verified.</p>
+          <p>Mainstream cloud providers often have the best features (Google
+          Drive) or better integration with the ecosystem (Apple iCloud). What
+          they lack is verifiable end-to-end encryption. Google Drive doesn't
+          offer it at all, and Apple's "Advanced Data Protection" claims it
+          encrypts at least the file contents, but since it's not open source
+          this claim can not be verified.</p>
 
           <p>I want to explore more privacy-oriented products, such as Proton
           Drive, but looking at recent reviews, they haven't yet achieved the
@@ -110,15 +159,16 @@
             can be self hosted, e.g. <a
             href="https://github.com/nextcloud/all-in-one">via Docker</a>, or
             you can rent a managed instance with a provider such as <a
-            href="https://www.ionos.de/office-loesungen/managed-nextcloud-hosting">IONOS</a> and
+            href="https://www.ionos.de/office-loesungen/managed-nextcloud-hosting">IONOS</a>
+            and
             <a
             href="https://www.hetzner.com/storage/storage-share/">Hetzner</a>.
             For more privacy I'd go with the self-hosted solution here, since
             the companies managing these instances, at least theoretically, have
-            access to your data. Nextcloud's end-to-end encryption App/Module
-            only covers specific folders. Even if it covered all cloud data,
-            nothing would stop these hosts from changing the server
-            implementation to provide a backdoor into the data.
+            access to your data. Nextcloud's end-to-end encryption Module only
+            covers specific folders. Even if it covered all cloud data, nothing
+            would stop these hosts from changing the server implementation to
+            provide a backdoor into the data.
           </p>
 
           <h2>Going Back to Self-Hosting</h2>
@@ -136,8 +186,8 @@
               storage with E2E encryption.</li>
               <li><a href="https://immich.app">Immich</a>: Self-hosted photo and
               video storage, an open-source alternative.</li>
-              <li><a href="https://ente.io">Ente / Ente self-hosted</a>:
-              Privacy-centric photo storage with E2E encryption.</li>
+              <li><a href="https://ente.io">Ente</a>: Privacy-centric photo
+              storage with E2E encryption.</li>
           </ul>
         </div>
       </blog-post>
