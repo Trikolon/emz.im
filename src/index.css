@@ -32,6 +32,20 @@ body {
   line-height: 1.5;
 }
 
+/* Make blockquotes nicer */
+
+blockquote {
+  border-left: 4px solid var(--text-secondary);
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+blockquote p {
+  margin: 0;
+}
+
 a {
   color: var(--link-color);
 }
