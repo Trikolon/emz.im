@@ -8,19 +8,13 @@
     <link rel="stylesheet" href="./src/index.css" />
     <script type="module" src="/src/index.ts"></script>
     <script type="module" src="/src/pixel-cat.ts"></script>
-    <style>
-      /* Only on this page show pixel-cat as part of the text */
-      pixel-cat {
-        position: relative;
-      }
-    </style>
   </head>
   <body>
     <main class="compact">
       <h1>Not found.</h1>
       <p> The page you're looking for doesn't exist. Please don't wake up Charlie. </p>
       <a href="/">Go home</a>
-      <pixel-cat sleeping></pixel-cat>
+      <pixel-cat class="pixel-cat-in-content" sleeping></pixel-cat>
     </main>
   </body>
 </html>

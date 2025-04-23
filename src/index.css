@@ -88,6 +88,11 @@ pixel-cat {
   right: 1rem;
 }
 
+/* Show pixel-cat as part of the content rather than to the side. */
+.pixel-cat-in-content {
+  position: relative;
+}
+
 @media (prefers-reduced-motion: reduce) {
   pixel-cat {
     display: none;
