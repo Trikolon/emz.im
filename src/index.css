@@ -102,3 +102,8 @@ pixel-cat {
 .compact {
   max-width: 65ch;
 }
+
+/* For pages with centered content. */
+.main-centered {
+  margin: 0 auto;
+}

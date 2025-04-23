@@ -75,13 +75,11 @@ export class BlogPost extends LitElement {
 
   static readonly styles = css`
     :host {
-      display: block;
       margin-bottom: 2rem;
     }
 
     .blog-post {
-      max-width: 65ch;
-      margin: 0 auto;
+      /* So the hash in front of the title doesn't overflow the viewport. */
       padding: 1rem;
     }
 
@@ -106,6 +104,12 @@ export class BlogPost extends LitElement {
       color: var(--text-secondary);
       opacity: 0;
       transition: opacity 0.2s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .title a::before {
+        transition: none;
+      }
     }
 
     .title a:hover::before {
