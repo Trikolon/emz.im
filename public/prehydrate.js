@@ -18,7 +18,7 @@
     /* Step 1: wait until all custom-element tags in the initial DOM are defined */
     const initialCustomTags = [
       ...new Set(
-        Array.from(document.querySelectorAll<HTMLElement>("*"))
+        Array.from(document.querySelectorAll("*"))
           .map((el) => el.tagName.toLowerCase())
           .filter((name) => name.includes("-")),
       ),
