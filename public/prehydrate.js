@@ -28,7 +28,7 @@
 
     /* Step 2: wait for first render of Lit elements present at this point */
     const initialLitElements = Array.from(
-      document.querySelectorAll<LitLike>("*"),
+      document.querySelectorAll("*"),
     ).filter((el) => typeof el.updateComplete === "object");
 
     if (initialLitElements.length) {
