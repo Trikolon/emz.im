@@ -27,16 +27,12 @@
     await Promise.all(initialCustomTags.map((tag) => customElements.whenDefined(tag)));
 
     /* Step 2: wait for first render of Lit elements present at this point */
-    interface LitLike extends HTMLElement {
-      updateComplete?: Promise<unknown>;
-    }
-
-    const initialLitElements: LitLike[] = Array.from(
+    const initialLitElements = Array.from(
       document.querySelectorAll<LitLike>("*"),
     ).filter((el) => typeof el.updateComplete === "object");
 
     if (initialLitElements.length) {
-      await Promise.allSettled(initialLitElements.map((el) => el.updateComplete!));
+      await Promise.allSettled(initialLitElements.map((el) => el.updateComplete));
     }
   } finally {
     /* Always reveal the page, even if a component throws */
