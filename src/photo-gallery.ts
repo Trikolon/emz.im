@@ -111,7 +111,8 @@ export class PhotoGallery extends LitElement {
       lightbox.src = image.src;
       lightbox.alt = image.alt;
       lightbox.title = this.getImageTitle(image);
-      lightbox.metadata = image.metadata;
+      lightbox.date = image.date;
+      lightbox.advancedMeta = image.advancedMeta;
       lightbox.show();
     }
   }

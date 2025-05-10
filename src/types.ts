@@ -11,29 +11,25 @@ export interface GalleryImage {
   /** Short caption for the image */
   caption: string;
   /** When the photo was taken */
-  date?: Date;
-  /** Optional CSS object-position value */
+  date: Date;
+  /** Optional CSS object-position value to position the thumbnail cutout */
   position?: string;
-  /** EXIF and other metadata */
-  metadata?: PhotoMetadata;
+  /** Advanced metadata used by the photo info panel. */
+  advancedMeta: AdvancedPhotoMetadata;
 }
 
 /**
- * EXIF and other metadata
+ * Advanced metadata used by the photo info panel.
  */
-export interface PhotoMetadata {
-  /** Photo Title */
-  ObjectName: string;
-  /** Date and time the photo was taken */
-  DateTimeOriginal: string;
+export interface AdvancedPhotoMetadata {
   /** Exposure time in seconds */
-  ExposureTime?: number;
+  exposureTime?: number;
   /** Aperture value */
-  FNumber?: number;
+  aperture?: number;
   /** ISO speed */
-  ISO?: number;
+  iso?: number;
   /** Focal length in millimeters */
-  FocalLength?: number;
+  focalLength?: number;
   /** Lens model */
-  LensModel?: string;
+  lensModel?: string;
 }

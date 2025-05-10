@@ -1,8 +1,8 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { PhotoMetadata } from "./types";
 import "./photo-info-panel";
 import { classMap } from "lit/directives/class-map.js";
+import { AdvancedPhotoMetadata } from "./types";
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {
@@ -16,7 +16,10 @@ export class LightboxDialog extends LitElement {
   title: string = "";
 
   @property({ type: Object })
-  metadata?: PhotoMetadata;
+  date: Date | null = null;
+
+  @property({ type: Object })
+  advancedMeta: AdvancedPhotoMetadata = {};
 
   @state()
   private showInfo = false;
@@ -203,7 +206,11 @@ export class LightboxDialog extends LitElement {
             loaded: !this.isLoading,
           })}
         />
-        <photo-info-panel .metadata="${this.metadata}" ?show="${this.showInfo}"></photo-info-panel>
+        <photo-info-panel
+          .date="${this.date}"
+          .advancedMeta="${this.advancedMeta}"
+          ?show="${this.showInfo}"
+        ></photo-info-panel>
       </dialog>
     `;
   }
