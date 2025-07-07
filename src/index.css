@@ -24,6 +24,19 @@
   }
 }
 
+/* View Transitions (currently only supported in Safari and Chromium browsers */
+@view-transition {
+  navigation: auto;
+}
+/* Apply fade (in/out) transitions to the <main> element of the page. */
+::view-transition-old(main) {
+  animation: 0.1s ease-out both fade;
+}
+
+::view-transition-new(main) {
+  animation: 0.1ns ease-out both fade;
+}
+
 /* Apply theme variables */
 body {
   background-color: var(--bg-color);
