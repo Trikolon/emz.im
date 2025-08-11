@@ -18,7 +18,7 @@
     "prettier": "^3.6.2",
     "sharp": "^0.34.2",
     "typescript": "^5.8.3",
-    "vite": "^7.0.2"
+    "vite": "^7.1.1"
   },
   "dependencies": {
     "lit": "^3.3.0"
