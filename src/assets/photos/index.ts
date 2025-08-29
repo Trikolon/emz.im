@@ -62,7 +62,7 @@ export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => 
     // The alt text can also be overridden by setting "alt" in custom metadata.
     // If no caption is available, fall back to the title.
     alt: metaCustom.alt ?? metaGenerated.Caption ?? metaGenerated.ObjectName,
-    caption: metaGenerated.ObjectName,
+    title: metaGenerated.ObjectName,
     date: new Date(metaGenerated.DateTimeOriginal),
     position: metaCustom.position,
     advancedMeta: {

@@ -8,8 +8,8 @@ export interface GalleryImage {
   thumbnail: string;
   /** Alt text describing the image */
   alt: string;
-  /** Short caption for the image */
-  caption: string;
+  /** Short title for the image */
+  title: string;
   /** When the photo was taken */
   date: Date;
   /** Optional CSS object-position value to position the thumbnail cutout */

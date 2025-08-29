@@ -47,18 +47,18 @@ export class PhotoGallery extends LitElement {
       border-radius: 4px;
     }
 
-    .caption {
+    .title {
       padding: 0.5rem;
     }
 
-    .caption h3 {
+    .title h3 {
       margin: 0;
       font-size: 1rem;
       font-weight: 500;
       color: var(--heading-color);
     }
 
-    .caption .date {
+    .title .date {
       font-size: 0.875rem;
       color: var(--text-secondary);
     }
@@ -76,16 +76,16 @@ export class PhotoGallery extends LitElement {
 
   /**
    * Generates a title string for the image tooltip
-   * Combines the caption with the date if available
+   * Combines the title with the date if available
    *
    * @param image - The gallery image object
    * @returns The formatted title string
    */
   private getImageTitle(image: GalleryImage): string {
     if (image.date) {
-      return `${image.caption} (${image.date.getFullYear()})`;
+      return `${image.title} (${image.date.getFullYear()})`;
     }
-    return image.caption;
+    return image.title;
   }
 
   /**
@@ -118,7 +118,7 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
-   * Renders a single gallery item with image and caption
+   * Renders a single gallery item with image and title
    */
   private renderGalleryItem(image: GalleryImage) {
     return html`
@@ -135,8 +135,8 @@ export class PhotoGallery extends LitElement {
             style="${image.position ? `--image-position: ${image.position}` : ""}"
           />
         </a>
-        <div class="caption">
-          <h3>${image.caption}</h3>
+        <div class="title">
+          <h3>${image.title}</h3>
           ${this.renderDate(image.date)}
         </div>
       </div>

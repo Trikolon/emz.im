@@ -43,15 +43,17 @@ The built files will be in the `dist` directory.
 1. Place your image files in the `scripts/photos/src` directory
 
 2. TIF is the recommended source format for images exported from Apple Photos.
-   Make sure that every image has a caption set. You can do this in Apple Photos
-   in the "Info" window. This caption will be used as the title in the UI.
+   Make sure that every image has a title set. You can do this in Apple Photos
+   in the "Info" window. This will be used as the title in the UI.
+   Also set "Caption" which will be used for the image alt text.
 
 3. Run the script: `npm run convert-photos`. This converts your images to AVIF
    and compresses them. It also extracts metadata from the images (e.g. EXIF)
    which will be displayed in the photo lightbox.
 
-4. Add alt text for the image in `src/assets/photos/photo-metadata`. The object
-   key is the file name without extension.
+4. If your image does not set a "Caption" or you don't want to use it add alt
+   text in `src/assets/photos/photo-metadata`. The object key is the file name
+   without extension.
 
    Optionally you can also add `position` which defines which part of the image
    the thumbnails in the photo gallery show.
