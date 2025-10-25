@@ -12,8 +12,6 @@ export interface GalleryImage {
   title: string;
   /** When the photo was taken */
   date: Date;
-  /** Optional CSS object-position value to position the thumbnail cutout */
-  position?: string;
   /** Advanced metadata used by the photo info panel. */
   advancedMeta: AdvancedPhotoMetadata;
 }

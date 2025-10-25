@@ -64,7 +64,6 @@ export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => 
     alt: metaCustom.alt ?? metaGenerated.Caption ?? metaGenerated.ObjectName,
     title: metaGenerated.ObjectName,
     date: new Date(metaGenerated.DateTimeOriginal),
-    position: metaCustom.position,
     advancedMeta: {
       exposureTime: metaGenerated.ExposureTime,
       aperture: metaGenerated.FNumber,

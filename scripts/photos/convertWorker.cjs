@@ -65,16 +65,27 @@ async function extractMetadata(sourcePath, metadataPath, filename) {
  * @param {Object} options - Conversion options
  * @param {number} [options.width] - Target width for resizing
  * @param {number} [options.quality] - Image quality (1-100)
+ * @param {boolean} [options.square] - Whether to create a square image by cropping
+ * @param {string} [options.position] - Sharp position for cropping (e.g., "left", "right", "center", "top", "bottom", "left top", etc.)
  * @returns {Promise<void>}
  */
 async function convertImage(sourcePath, outputPath, options = {}) {
   let pipeline = sharp(sourcePath);
 
   if (options.width) {
-    pipeline = pipeline.resize(options.width, null, {
+    const resizeOptions = {
+      width: options.width,
+      height: options.square ? options.width : null,
+      fit: options.square ? "cover" : "inside",
       withoutEnlargement: true,
-      fit: "inside",
-    });
+    };
+
+    // Add position if specified for square crops
+    if (options.square && options.position) {
+      resizeOptions.position = options.position;
+    }
+
+    pipeline = pipeline.resize(resizeOptions);
   }
 
   await pipeline
@@ -101,6 +112,9 @@ async function processFile(file) {
   const thumbnailPath = path.join(config.THUMBNAIL_DIR, `${newname}.${config.DEST_FORMAT}`);
   const metadataPath = path.join(config.META_DIR, `${newname}.json`);
 
+  // Get custom thumbnail position if defined
+  const thumbnailPosition = config.THUMBNAIL_POSITIONS?.[newname];
+
   await Promise.all([
     extractMetadata(sourcePath, metadataPath, file),
     convertImage(sourcePath, fullSizePath, {
@@ -109,6 +123,8 @@ async function processFile(file) {
     convertImage(sourcePath, thumbnailPath, {
       width: config.THUMBNAIL_WIDTH,
       quality: config.THUMBNAIL_QUALITY,
+      square: true,
+      position: thumbnailPosition,
     }),
   ]);
 }

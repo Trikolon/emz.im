@@ -43,7 +43,6 @@ export class PhotoGallery extends LitElement {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: var(--image-position, center);
       border-radius: 4px;
     }
 
@@ -132,7 +131,6 @@ export class PhotoGallery extends LitElement {
             decoding="async"
             width="300"
             height="300"
-            style="${image.position ? `--image-position: ${image.position}` : ""}"
           />
         </a>
         <div class="title">

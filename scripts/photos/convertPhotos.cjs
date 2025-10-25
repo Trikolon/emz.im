@@ -29,6 +29,9 @@ const fs = require("fs/promises");
 const { Worker } = require("worker_threads");
 const os = require("os");
 
+// Load thumbnail position configuration
+const thumbnailPositions = require("./thumbnail-positions.cjs");
+
 // Configuration
 const QUALITY = 70;
 const THUMBNAIL_QUALITY = 60;
@@ -85,6 +88,7 @@ async function createWorker() {
       THUMBNAIL_DIR,
       META_DIR,
       METADATA_FIELDS,
+      THUMBNAIL_POSITIONS: thumbnailPositions,
     },
   });
 
