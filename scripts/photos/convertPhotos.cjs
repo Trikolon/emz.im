@@ -34,6 +34,7 @@ const QUALITY = 70;
 const THUMBNAIL_QUALITY = 60;
 const DEST_FORMAT = "avif";
 const THUMBNAIL_WIDTH = 600;
+const FULL_SIZE_WIDTH = 3840; // 4k
 
 // Get the repository root directory (parent of scripts directory)
 const SCRIPT_DIR = __dirname;
@@ -78,6 +79,7 @@ async function createWorker() {
       THUMBNAIL_QUALITY,
       DEST_FORMAT,
       THUMBNAIL_WIDTH,
+      FULL_SIZE_WIDTH,
       SOURCE_DIR,
       FULL_SIZE_DIR,
       THUMBNAIL_DIR,
@@ -169,6 +171,7 @@ async function convertPhotos() {
     console.info(`Using ${WORKER_COUNT} worker threads`);
     console.info(`Full size quality: ${QUALITY}`);
     console.info(`Thumbnail quality: ${THUMBNAIL_QUALITY}`);
+    console.info(`Full size width: ${FULL_SIZE_WIDTH}px`);
     console.info(`Thumbnail width: ${THUMBNAIL_WIDTH}px`);
 
     // Get all files from source directory

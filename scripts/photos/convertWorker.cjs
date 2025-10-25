@@ -103,7 +103,9 @@ async function processFile(file) {
 
   await Promise.all([
     extractMetadata(sourcePath, metadataPath, file),
-    convertImage(sourcePath, fullSizePath),
+    convertImage(sourcePath, fullSizePath, {
+      width: config.FULL_SIZE_WIDTH,
+    }),
     convertImage(sourcePath, thumbnailPath, {
       width: config.THUMBNAIL_WIDTH,
       quality: config.THUMBNAIL_QUALITY,
