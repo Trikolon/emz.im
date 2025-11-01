@@ -13,7 +13,7 @@ export class LightboxDialog extends LitElement {
   images: GalleryImage[] = [];
 
   @property({ type: Number })
-  currentIndex: number | null = 0;
+  currentIndex: number | null = null;
 
   @state()
   private showInfo = false;
@@ -40,18 +40,19 @@ export class LightboxDialog extends LitElement {
       max-width: 95vw;
       max-height: 95vh;
       color: white;
+      background: transparent;
+    }
 
+    dialog[open] {
       /* Keep dialog centered and sized consistently to avoid repositioning flash */
       width: 95vw;
       height: 95vh;
+      /* Only apply this when the dialog is open, otherwise it will *always*
+      render the dialog as we override the display property that's used for
+      hiding it initially. */
       display: flex;
       align-items: center;
       justify-content: center;
-
-      background: transparent;
-
-      /* Allow horizontal swipe gestures but prevent vertical scrolling */
-      touch-action: pan-y pinch-zoom;
     }
 
     dialog::backdrop {
