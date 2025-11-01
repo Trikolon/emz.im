@@ -97,7 +97,8 @@ export class PhotoGallery extends LitElement {
     if (!date) {
       return null;
     }
-    return html`<span class="date">${date.getFullYear()}</span>`;
+    const monthYear = date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    return html`<span class="date">${monthYear}</span>`;
   }
 
   /**
