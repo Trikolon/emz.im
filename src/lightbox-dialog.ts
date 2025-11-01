@@ -41,12 +41,12 @@ export class LightboxDialog extends LitElement {
       max-height: 95vh;
       color: white;
 
-      /* Set dimensions explicitly when the image is loading to avoid layout
-      issues with the loading spinner */
-      &:not(:has(img.loaded)) {
-        width: 95vw;
-        height: 95vh;
-      }
+      /* Keep dialog centered and sized consistently to avoid repositioning flash */
+      width: 95vw;
+      height: 95vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       background: transparent;
 
@@ -60,8 +60,8 @@ export class LightboxDialog extends LitElement {
 
     img {
       display: block;
-      max-width: 95vw;
-      max-height: 95vh;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
       opacity: 0;
       transition: opacity 0.3s ease-out;
