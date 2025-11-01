@@ -1,25 +1,19 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import "./photo-info-panel";
 import { classMap } from "lit/directives/class-map.js";
-import { AdvancedPhotoMetadata } from "./types";
+import { GalleryImage } from "./types";
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {
-  @property({ type: String })
-  src: string = "";
+  @query("dialog")
+  private dialog!: HTMLDialogElement;
 
-  @property({ type: String })
-  alt: string = "";
+  @property({ type: Array })
+  images: GalleryImage[] = [];
 
-  @property({ type: String })
-  title: string = "";
-
-  @property({ type: Object })
-  date: Date | null = null;
-
-  @property({ type: Object })
-  advancedMeta: AdvancedPhotoMetadata = {};
+  @property({ type: Number })
+  currentIndex: number | null = 0;
 
   @state()
   private showInfo = false;
@@ -29,6 +23,19 @@ export class LightboxDialog extends LitElement {
 
   @state()
   private showLoadingSpinner = false;
+
+  // Cache for pointer start positions for swipe detection.
+  private pointerStartX = 0;
+  private pointerStartY = 0;
+
+  // Gets the currently selected image based on currentIndex. This is the image
+  // that will be displayed.
+  private get currentImage(): GalleryImage | null {
+    if (this.currentIndex == null) {
+      return null;
+    }
+    return this.images[this.currentIndex];
+  }
 
   static readonly styles = css`
     dialog {
@@ -46,6 +53,9 @@ export class LightboxDialog extends LitElement {
       }
 
       background: transparent;
+
+      /* Allow horizontal swipe gestures but prevent vertical scrolling */
+      touch-action: pan-y pinch-zoom;
     }
 
     dialog::backdrop {
@@ -139,10 +149,7 @@ export class LightboxDialog extends LitElement {
 
   private onCloseButtonClick(e: MouseEvent) {
     if (e.target === e.currentTarget) {
-      const dialog = this.renderRoot.querySelector("dialog");
-      if (dialog) {
-        dialog.close();
-      }
+      this.dialog.close();
     }
   }
 
@@ -159,15 +166,86 @@ export class LightboxDialog extends LitElement {
     this.showLoadingSpinner = false;
   }
 
-  show() {
-    const dialog = this.renderRoot.querySelector("dialog");
-    if (dialog) {
+  /**
+   * Handles keyboard navigation for the lightbox.
+   * @param event - The keyboard event.
+   */
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      this.showPreviousImage();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      this.showNextImage();
+    }
+  }
+
+  /**
+   * Handles swipe gesture start.
+   * @param event - The pointer down event.
+   */
+  private handlePointerDown(event: PointerEvent) {
+    // Only handle touch/pen input, not mouse
+    if (event.pointerType === "mouse") return;
+
+    this.pointerStartX = event.clientX;
+    this.pointerStartY = event.clientY;
+  }
+
+  /**
+   * Handles swipe gesture end.
+   * @param event - The pointer up event.
+   */
+  private handlePointerUp(event: PointerEvent) {
+    // Only handle touch/pen input, not mouse
+    if (event.pointerType === "mouse") return;
+
+    const deltaX = event.clientX - this.pointerStartX;
+    const deltaY = event.clientY - this.pointerStartY;
+    // Only detect significant horizontal swipes.
+    const minSwipeDistance = 50;
+
+    // Check if horizontal swipe is dominant (not vertical scroll)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0) {
+        // Swiped right -> show previous image
+        this.showPreviousImage();
+      } else {
+        // Swiped left -> show next image
+        this.showNextImage();
+      }
+    }
+  }
+
+  /**
+   * Shows the previous image in the lightbox.
+   * Wraps around to the last image if at the beginning.
+   */
+  private showPreviousImage() {
+    if (this.images.length === 0 || this.currentIndex == null) return;
+
+    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+    this.updateImageFromIndex();
+  }
+
+  /**
+   * Shows the next image in the lightbox.
+   * Wraps around to the first image if at the end.
+   */
+  private showNextImage() {
+    if (this.images.length === 0 || this.currentIndex == null) return;
+
+    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    this.updateImageFromIndex();
+  }
+
+  /**
+   * Updates the displayed image based on the current index.
+   */
+  private updateImageFromIndex() {
+    if (this.currentImage) {
       this.isLoading = true;
       this.showLoadingSpinner = false;
-
-      // Disable page scroll while the dialog is open.
-      this.disablePageScroll();
-      dialog.showModal();
 
       // Only show loading spinner if loading takes more than 100ms
       setTimeout(() => {
@@ -178,12 +256,62 @@ export class LightboxDialog extends LitElement {
     }
   }
 
+  show() {
+    this.isLoading = true;
+    this.showLoadingSpinner = false;
+
+    // Disable page scroll while the dialog is open.
+    this.disablePageScroll();
+    this.dialog.showModal();
+
+    // Only show loading spinner if loading takes more than 100ms
+    setTimeout(() => {
+      if (this.isLoading) {
+        this.showLoadingSpinner = true;
+      }
+    }, 100);
+  }
+
+  /**
+   * Renders the content of the currently displayed image.
+   * @returns The HTML content for the image or null if no image is present.
+   */
+  private renderImageContent() {
+    const image = this.currentImage;
+
+    if (!image) {
+      return null;
+    }
+
+    return html`
+      <img
+        src="${image.src}"
+        alt="${image.alt}"
+        title="${image.title}"
+        @load="${this.onImageLoad}"
+        class=${classMap({
+          loaded: !this.isLoading,
+        })}
+      />
+      <photo-info-panel
+        .date="${image.date}"
+        .advancedMeta="${image.advancedMeta}"
+        ?show="${this.showInfo}"
+      ></photo-info-panel>
+    `;
+  }
+
   render() {
+    const image = this.currentImage;
+
     return html`
       <dialog
         @click="${this.onCloseButtonClick}"
         @close="${this.onDialogClose}"
-        aria-label="Photo Lightbox: ${this.title}"
+        @keydown="${this.handleKeydown}"
+        @pointerdown="${this.handlePointerDown}"
+        @pointerup="${this.handlePointerUp}"
+        aria-label="Photo Lightbox: ${image?.title ?? "Photo"}"
       >
         <div class="controls">
           <button @click="${this.onCloseButtonClick}" title="Close">close</button>
@@ -192,25 +320,12 @@ export class LightboxDialog extends LitElement {
         <div
           class=${classMap({
             "loading-container": true,
-            visible: this.showLoadingSpinner,
+            visible: !image || this.showLoadingSpinner,
           })}
         >
           <div class="loading-spinner"></div>
         </div>
-        <img
-          src="${this.src}"
-          alt="${this.alt}"
-          title="${this.title}"
-          @load="${this.onImageLoad}"
-          class=${classMap({
-            loaded: !this.isLoading,
-          })}
-        />
-        <photo-info-panel
-          .date="${this.date}"
-          .advancedMeta="${this.advancedMeta}"
-          ?show="${this.showInfo}"
-        ></photo-info-panel>
+        ${this.renderImageContent()}
       </dialog>
     `;
   }
@@ -222,7 +337,7 @@ export class LightboxDialog extends LitElement {
     this.enablePageScroll();
 
     // Clear src when closing so on next open we don't see the previous image.
-    this.src = "";
+    this.currentIndex = null;
   }
 }
 

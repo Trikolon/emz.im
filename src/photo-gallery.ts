@@ -1,12 +1,19 @@
 import { LitElement, html, css } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, query } from "lit/decorators.js";
 import "./lightbox-dialog";
 import { photos } from "./assets/photos";
 import { GalleryImage } from "./types";
+import type { LightboxDialog } from "./lightbox-dialog";
 
 @customElement("photo-gallery")
 export class PhotoGallery extends LitElement {
-  private images: GalleryImage[] = photos;
+  @query("lightbox-dialog")
+  private lightbox!: LightboxDialog;
+
+  // Sort images by date in descending order (newest first).
+  private imagesSorted: GalleryImage[] = [...photos].sort(
+    (a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0),
+  );
 
   static readonly styles = css`
     /* Use the same link styling as the rest of the site */
@@ -102,28 +109,22 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
-   * Handles opening the lightbox when an image is clicked
+   * Handles opening the lightbox when an image is clicked.
    */
-  private handleImageClick(e: Event, image: GalleryImage) {
+  private handleImageClick(e: Event, imageIndex: number) {
     e.preventDefault();
-    const lightbox = this.renderRoot.querySelector("lightbox-dialog");
-    if (lightbox) {
-      lightbox.src = image.src;
-      lightbox.alt = image.alt;
-      lightbox.title = this.getImageTitle(image);
-      lightbox.date = image.date;
-      lightbox.advancedMeta = image.advancedMeta;
-      lightbox.show();
-    }
+    this.lightbox.images = this.imagesSorted;
+    this.lightbox.currentIndex = imageIndex;
+    this.lightbox.show();
   }
 
   /**
    * Renders a single gallery item with image and title
    */
-  private renderGalleryItem(image: GalleryImage) {
+  private renderGalleryItem(image: GalleryImage, index: number) {
     return html`
       <div class="gallery-item">
-        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, image)}">
+        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, index)}">
           <img
             src="${image.thumbnail}"
             alt="${image.alt}"
@@ -149,12 +150,10 @@ export class PhotoGallery extends LitElement {
    * @returns Template for the full gallery
    */
   render() {
-    const sortedImages = [...this.images].sort(
-      (a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0),
-    );
-
     return html`
-      <div class="gallery"> ${sortedImages.map((image) => this.renderGalleryItem(image))} </div>
+      <div class="gallery">
+        ${this.imagesSorted.map((image, index) => this.renderGalleryItem(image, index))}
+      </div>
       <lightbox-dialog></lightbox-dialog>
     `;
   }
