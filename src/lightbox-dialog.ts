@@ -24,10 +24,6 @@ export class LightboxDialog extends LitElement {
   @state()
   private showLoadingSpinner = false;
 
-  // Cache for pointer start positions for swipe detection.
-  private pointerStartX = 0;
-  private pointerStartY = 0;
-
   // Gets the currently selected image based on currentIndex. This is the image
   // that will be displayed.
   private get currentImage(): GalleryImage | null {
@@ -181,43 +177,6 @@ export class LightboxDialog extends LitElement {
   }
 
   /**
-   * Handles swipe gesture start.
-   * @param event - The pointer down event.
-   */
-  private handlePointerDown(event: PointerEvent) {
-    // Only handle touch/pen input, not mouse
-    if (event.pointerType === "mouse") return;
-
-    this.pointerStartX = event.clientX;
-    this.pointerStartY = event.clientY;
-  }
-
-  /**
-   * Handles swipe gesture end.
-   * @param event - The pointer up event.
-   */
-  private handlePointerUp(event: PointerEvent) {
-    // Only handle touch/pen input, not mouse
-    if (event.pointerType === "mouse") return;
-
-    const deltaX = event.clientX - this.pointerStartX;
-    const deltaY = event.clientY - this.pointerStartY;
-    // Only detect significant horizontal swipes.
-    const minSwipeDistance = 50;
-
-    // Check if horizontal swipe is dominant (not vertical scroll)
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-      if (deltaX > 0) {
-        // Swiped right -> show previous image
-        this.showPreviousImage();
-      } else {
-        // Swiped left -> show next image
-        this.showNextImage();
-      }
-    }
-  }
-
-  /**
    * Shows the previous image in the lightbox.
    * Wraps around to the last image if at the beginning.
    */
@@ -309,8 +268,6 @@ export class LightboxDialog extends LitElement {
         @click="${this.onCloseButtonClick}"
         @close="${this.onDialogClose}"
         @keydown="${this.handleKeydown}"
-        @pointerdown="${this.handlePointerDown}"
-        @pointerup="${this.handlePointerUp}"
         aria-label="Photo Lightbox: ${image?.title ?? "Photo"}"
       >
         <div class="controls">
