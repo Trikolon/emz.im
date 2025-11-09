@@ -5,6 +5,9 @@ import { photos } from "./assets/photos";
 import { GalleryImage } from "./types";
 import type { LightboxDialog } from "./lightbox-dialog";
 
+// URL parameter name for deep linking to specific images.
+const IMAGE_URL_PARAM = "id";
+
 @customElement("photo-gallery")
 export class PhotoGallery extends LitElement {
   @query("lightbox-dialog")
@@ -113,9 +116,64 @@ export class PhotoGallery extends LitElement {
    */
   private handleImageClick(e: Event, imageIndex: number) {
     e.preventDefault();
-    this.lightbox.images = this.imagesSorted;
     this.lightbox.currentIndex = imageIndex;
     this.lightbox.show();
+  }
+
+  /**
+   * Sets the image ID in the URL parameters for deep linking.
+   * @param image - The gallery image to set in the URL, or null to clear.
+   */
+  private setImageRoute(image: GalleryImage | null) {
+    const url = new URL(window.location.href);
+    if (image) {
+      url.searchParams.set(IMAGE_URL_PARAM, image.id);
+    } else {
+      url.searchParams.delete(IMAGE_URL_PARAM);
+    }
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  private getImageIdFromRoute(): GalleryImage | null {
+    const urlParams = new URLSearchParams(window.location.search);
+    const imageId = urlParams.get(IMAGE_URL_PARAM);
+    if (imageId) {
+      // TODO: use map for main images object.
+      const image = this.imagesSorted.find((img) => img.id === imageId);
+      return image || null;
+    }
+    return null;
+  }
+
+  /**
+   * Handles updates to the lightbox image and updates the URL accordingly.
+   * @param e
+   */
+  private handleLightboxImageChanged(e: CustomEvent) {
+    const image = e.detail.image as GalleryImage | null;
+    this.setImageRoute(image);
+  }
+
+  /**
+   * On first update init the lightbox dialog and show it if the URL has a photo
+   * parameter.
+   */
+  async firstUpdated(): Promise<void> {
+    // Ensure lightbox has the full image list.
+    this.lightbox.images = this.imagesSorted;
+
+    // Check if URL has a photo parameter to open lightbox on load with a specific image.
+    const image = this.getImageIdFromRoute();
+    if (image) {
+      const index = this.imagesSorted.findIndex((img) => img.id === image.id);
+      if (index !== -1) {
+        this.lightbox.currentIndex = index;
+        // The lightbox may not be ready yet. Wait for it to finish rendering
+        // before calling show().
+        await this.lightbox.updateComplete;
+        this.lightbox.show();
+      }
+    }
   }
 
   /**
@@ -154,7 +212,7 @@ export class PhotoGallery extends LitElement {
       <div class="gallery">
         ${this.imagesSorted.map((image, index) => this.renderGalleryItem(image, index))}
       </div>
-      <lightbox-dialog></lightbox-dialog>
+      <lightbox-dialog @image-changed="${this.handleLightboxImageChanged}"></lightbox-dialog>
     `;
   }
 }

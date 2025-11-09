@@ -2,6 +2,8 @@
  * Photo gallery image information
  */
 export interface GalleryImage {
+  /** Unique identifier for the image */
+  id: string;
   /** Full size image source */
   src: string;
   /** Thumbnail image source */

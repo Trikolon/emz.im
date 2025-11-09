@@ -55,6 +55,7 @@ export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => 
 
   // Construct gallery image object combining custom metadata and generated metadata.
   return {
+    id: name,
     src: fullSizeImages[path].default,
     thumbnail: thumbnails[`./thumbnails/${name}.avif`].default,
     // For alt text use the "Caption" field of the metadata. This isn't ideal

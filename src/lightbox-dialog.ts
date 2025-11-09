@@ -213,6 +213,15 @@ export class LightboxDialog extends LitElement {
           this.showLoadingSpinner = true;
         }
       }, 100);
+
+      // Emit event when image changes
+      this.dispatchEvent(
+        new CustomEvent("image-changed", {
+          detail: { image: this.currentImage },
+          bubbles: true,
+          composed: true,
+        }),
+      );
     }
   }
 
@@ -230,6 +239,17 @@ export class LightboxDialog extends LitElement {
         this.showLoadingSpinner = true;
       }
     }, 100);
+
+    // Emit event for initial image
+    if (this.currentImage) {
+      this.dispatchEvent(
+        new CustomEvent("image-changed", {
+          detail: { image: this.currentImage },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   /**
@@ -296,6 +316,16 @@ export class LightboxDialog extends LitElement {
 
     // Clear src when closing so on next open we don't see the previous image.
     this.currentIndex = null;
+
+    // When dialog is closed emit event with null image so that consumers know
+    // we don't display anything.
+    this.dispatchEvent(
+      new CustomEvent("image-changed", {
+        detail: { image: null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 }
 
