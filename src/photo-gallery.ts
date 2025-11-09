@@ -18,6 +18,12 @@ export class PhotoGallery extends LitElement {
     (a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0),
   );
 
+  // Map of image ID to {image, index} for quick lookup. Derived from sorted
+  // array to maintain consistency with the order used for lightbox indices.
+  private imageMap: Map<string, { image: GalleryImage; index: number }> = new Map(
+    this.imagesSorted.map((img, index) => [img.id, { image: img, index }]),
+  );
+
   static readonly styles = css`
     /* Use the same link styling as the rest of the site */
     a {
@@ -134,15 +140,13 @@ export class PhotoGallery extends LitElement {
     window.history.replaceState({}, "", url.toString());
   }
 
-  private getImageIdFromRoute(): GalleryImage | null {
+  private getImageFromRoute(): { image: GalleryImage; index: number } | null {
     const urlParams = new URLSearchParams(window.location.search);
     const imageId = urlParams.get(IMAGE_URL_PARAM);
-    if (imageId) {
-      // TODO: use map for main images object.
-      const image = this.imagesSorted.find((img) => img.id === imageId);
-      return image || null;
+    if (!imageId) {
+      return null;
     }
-    return null;
+    return this.imageMap.get(imageId) || null;
   }
 
   /**
@@ -163,16 +167,13 @@ export class PhotoGallery extends LitElement {
     this.lightbox.images = this.imagesSorted;
 
     // Check if URL has a photo parameter to open lightbox on load with a specific image.
-    const image = this.getImageIdFromRoute();
-    if (image) {
-      const index = this.imagesSorted.findIndex((img) => img.id === image.id);
-      if (index !== -1) {
-        this.lightbox.currentIndex = index;
-        // The lightbox may not be ready yet. Wait for it to finish rendering
-        // before calling show().
-        await this.lightbox.updateComplete;
-        this.lightbox.show();
-      }
+    const imageData = this.getImageFromRoute();
+    if (imageData) {
+      this.lightbox.currentIndex = imageData.index;
+      // The lightbox may not be ready yet. Wait for it to finish rendering
+      // before calling show().
+      await this.lightbox.updateComplete;
+      this.lightbox.show();
     }
   }
 
