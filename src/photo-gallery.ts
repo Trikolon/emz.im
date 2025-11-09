@@ -140,13 +140,25 @@ export class PhotoGallery extends LitElement {
     window.history.replaceState({}, "", url.toString());
   }
 
+  /**
+   * Retrieves the image from the URL parameters.
+   * Side effect: If the image ID is invalid, resets image param in the URL.
+   * @returns The image and its index, or null if not found.
+   */
   private getImageFromRoute(): { image: GalleryImage; index: number } | null {
     const urlParams = new URLSearchParams(window.location.search);
     const imageId = urlParams.get(IMAGE_URL_PARAM);
     if (!imageId) {
       return null;
     }
-    return this.imageMap.get(imageId) || null;
+    // Found an image id. Look it up in the map.
+    let image = this.imageMap.get(imageId);
+    if (!image) {
+      // Invalid image id, reset route and return null.
+      this.setImageRoute(null);
+      return null;
+    }
+    return image;
   }
 
   /**
@@ -166,15 +178,19 @@ export class PhotoGallery extends LitElement {
     // Ensure lightbox has the full image list.
     this.lightbox.images = this.imagesSorted;
 
-    // Check if URL has a photo parameter to open lightbox on load with a specific image.
+    // Check if URL has an image parameter to open lightbox on load with a
+    // specific image.
     const imageData = this.getImageFromRoute();
-    if (imageData) {
-      this.lightbox.currentIndex = imageData.index;
-      // The lightbox may not be ready yet. Wait for it to finish rendering
-      // before calling show().
-      await this.lightbox.updateComplete;
-      this.lightbox.show();
+    if (!imageData) {
+      return;
     }
+
+    // Open lightbox at the specified image.
+    this.lightbox.currentIndex = imageData.index;
+    // The lightbox may not be ready yet. Wait for it to finish rendering
+    // before calling show().
+    await this.lightbox.updateComplete;
+    this.lightbox.show();
   }
 
   /**
