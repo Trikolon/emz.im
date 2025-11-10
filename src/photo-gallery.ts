@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import "./lightbox-dialog";
 import { photos } from "./assets/photos";
-import { GalleryImage } from "./types";
+import { GalleryImage, LightboxImageChangeEvent } from "./types";
 import type { LightboxDialog } from "./lightbox-dialog";
 
 // URL parameter name for deep linking to specific images.
@@ -123,7 +123,7 @@ export class PhotoGallery extends LitElement {
   private handleImageClick(e: Event, imageIndex: number) {
     e.preventDefault();
     this.lightbox.currentIndex = imageIndex;
-    this.lightbox.show();
+    this.lightbox.show(true);
   }
 
   /**
@@ -174,12 +174,13 @@ export class PhotoGallery extends LitElement {
    * Handles updates to the lightbox image and updates the URL accordingly.
    * @param e
    */
-  private handleLightboxImageChanged(e: CustomEvent) {
+  private handleLightboxImageChanged(e: LightboxImageChangeEvent) {
     const image = e.detail.image as GalleryImage | null;
     this.setImageRoute(image);
 
-    // In the background scroll image into view in the gallery.
-    if (image) {
+    // In the background scroll image into view in the gallery. Don't scroll if
+    // the user clicked the image to open the lightbox as that can be confusing.
+    if (image && !e.detail.fromGalleryClick) {
       this.scrollImageIntoView(image);
     }
   }

@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import "./photo-info-panel";
 import { classMap } from "lit/directives/class-map.js";
-import { GalleryImage } from "./types";
+import { GalleryImage, LightboxImageChangeDetail } from "./types";
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {
@@ -216,8 +216,8 @@ export class LightboxDialog extends LitElement {
 
       // Emit event when image changes
       this.dispatchEvent(
-        new CustomEvent("image-changed", {
-          detail: { image: this.currentImage },
+        new CustomEvent<LightboxImageChangeDetail>("image-changed", {
+          detail: { image: this.currentImage, fromGalleryClick: false },
           bubbles: true,
           composed: true,
         }),
@@ -225,7 +225,7 @@ export class LightboxDialog extends LitElement {
     }
   }
 
-  show() {
+  show(fromGalleryClick: boolean = false) {
     this.isLoading = true;
     this.showLoadingSpinner = false;
 
@@ -243,8 +243,8 @@ export class LightboxDialog extends LitElement {
     // Emit event for initial image
     if (this.currentImage) {
       this.dispatchEvent(
-        new CustomEvent("image-changed", {
-          detail: { image: this.currentImage },
+        new CustomEvent<LightboxImageChangeDetail>("image-changed", {
+          detail: { image: this.currentImage, fromGalleryClick },
           bubbles: true,
           composed: true,
         }),
@@ -320,8 +320,8 @@ export class LightboxDialog extends LitElement {
     // When dialog is closed emit event with null image so that consumers know
     // we don't display anything.
     this.dispatchEvent(
-      new CustomEvent("image-changed", {
-        detail: { image: null },
+      new CustomEvent<LightboxImageChangeDetail>("image-changed", {
+        detail: { image: null, fromGalleryClick: false },
         bubbles: true,
         composed: true,
       }),

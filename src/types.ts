@@ -33,3 +33,18 @@ export interface AdvancedPhotoMetadata {
   /** Lens model */
   lensModel?: string;
 }
+
+/**
+ * Event detail for lightbox image change events
+ */
+export interface LightboxImageChangeDetail {
+  /** The image that is now displayed, or null if lightbox is closed */
+  image: GalleryImage | null;
+  /** Whether the change was initiated by a user click on a gallery tile */
+  fromGalleryClick: boolean;
+}
+
+/**
+ * Custom event dispatched when the lightbox image changes
+ */
+export type LightboxImageChangeEvent = CustomEvent<LightboxImageChangeDetail>;
