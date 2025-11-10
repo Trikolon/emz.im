@@ -162,12 +162,26 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
+   * Scrolls the specified image into view within the gallery.
+   * @param image - The gallery image to scroll into view.
+   */
+  private scrollImageIntoView(image: GalleryImage) {
+    const imgElement = this.renderRoot.querySelector(`#${image.id}`);
+    imgElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  /**
    * Handles updates to the lightbox image and updates the URL accordingly.
    * @param e
    */
   private handleLightboxImageChanged(e: CustomEvent) {
     const image = e.detail.image as GalleryImage | null;
     this.setImageRoute(image);
+
+    // In the background scroll image into view in the gallery.
+    if (image) {
+      this.scrollImageIntoView(image);
+    }
   }
 
   /**
@@ -186,8 +200,7 @@ export class PhotoGallery extends LitElement {
     }
 
     // Scroll to image in the gallery.
-    const imgElement = this.renderRoot.querySelector(`#${imageData.image.id}`);
-    imgElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    this.scrollImageIntoView(imageData.image);
 
     // Open lightbox at the specified image.
     this.lightbox.currentIndex = imageData.index;
