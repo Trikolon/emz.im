@@ -185,6 +185,10 @@ export class PhotoGallery extends LitElement {
       return;
     }
 
+    // Scroll to image in the gallery.
+    const imgElement = this.renderRoot.querySelector(`#${imageData.image.id}`);
+    imgElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+
     // Open lightbox at the specified image.
     this.lightbox.currentIndex = imageData.index;
     // The lightbox may not be ready yet. Wait for it to finish rendering
@@ -201,6 +205,7 @@ export class PhotoGallery extends LitElement {
       <div class="gallery-item">
         <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, index)}">
           <img
+            id="${image.id}"
             src="${image.thumbnail}"
             alt="${image.alt}"
             title="${this.getImageTitle(image)}"
