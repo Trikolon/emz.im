@@ -14,4 +14,7 @@ module.exports = {
 
   // Crop from the bottom to preserve the horizon
   "muted-sky": "bottom",
+
+  // Center the "hotel" sign in the frame
+  hotel: "top",
 };
