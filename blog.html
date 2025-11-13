@@ -1,83 +1,91 @@
 <!doctype html>
 <html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Blog posts by Emma Zühlcke." />
+    <title>Emma Zühlcke - Blog</title>
+    <link rel="stylesheet" href="/src/index.css" />
+    <script type="module" src="/src/index.ts"></script>
+    <script type="module" src="/src/blog-post.ts"></script>
+    <script type="module" src="/src/pixel-cat.ts"></script>
+    <script type="module" src="/src/navigation-bar.ts"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Blog posts by Emma Zühlcke." />
-  <title>Emma Zühlcke - Blog</title>
-  <link rel="stylesheet" href="./src/index.css" />
-  <script type="module" src="/src/index.ts"></script>
-  <script type="module" src="/src/blog-post.ts"></script>
-  <script type="module" src="/src/pixel-cat.ts"></script>
-  <script type="module" src="/src/navigation-bar.ts"></script>
-</head>
+  <body>
+    <navigation-bar></navigation-bar>
+    <main class="compact main-centered">
+      <blog-post id="google-3pcd" date="2025-04-22">
+        <span slot="title">Google is Scrapping Plans for Third-Party Cookie Deprecation</span>
+        <div slot="body">
+          <p
+            >After years of pushing timelines for third-party cookie deprecation and eventually
+            watering it down to an opt-in dialog, it seems Google has now fully given up on it:</p
+          >
 
-<body>
-  <navigation-bar></navigation-bar>
-  <main class="compact main-centered">
-    <blog-post id="google-3pcd" date="2025-04-22">
-      <span slot="title">Google is Scrapping Plans for Third-Party Cookie Deprecation</span>
-      <div slot="body">
-        <p>After years of pushing timelines for third-party cookie
-          deprecation and eventually watering it down to an opt-in dialog, it
-          seems Google has now fully given up on it:</p>
+          <p
+            ><a
+              href="https://privacysandbox.com/news/privacy-sandbox-next-steps/#:~:text=we’ve%20made%20the,and%20Security%20Settings."
+              >Next steps for Privacy Sandbox and tracking protections in Chrome</a
+            ></p
+          >
 
-        <p><a
-            href="https://privacysandbox.com/news/privacy-sandbox-next-steps/#:~:text=we’ve%20made%20the,and%20Security%20Settings.">Next
-            steps for Privacy Sandbox and tracking protections in Chrome</a></p>
+          <blockquote>
+            we’ve made the decision to maintain our current approach to offering users third-party
+            cookie choice in Chrome, and will not be rolling out a new standalone prompt for
+            third-party cookies.
+          </blockquote>
 
-        <blockquote>
-          we’ve made the decision to maintain our current approach to
-          offering users third-party cookie choice in Chrome, and will not
-          be rolling out a new standalone prompt for third-party cookies.
-        </blockquote>
+          <p>This is such a huge loss for Chrome users and the web as a whole.</p>
 
-        <p>This is such a huge loss for Chrome users and the web as a
-          whole.</p>
+          <p
+            >They still block third-party cookies in incognito mode, but that’s such a small share
+            of browsing.</p
+          >
 
-        <p>They still block third-party cookies in incognito mode, but
-          that’s such a small share of browsing.</p>
+          <p>They also say:</p>
 
-        <p>They also say:</p>
+          <blockquote>
+            Users can continue to choose the best option for themselves in Chrome’s Privacy and
+            Security Settings.
+          </blockquote>
 
-        <blockquote>
-          Users can continue to choose the best option for themselves in
-          Chrome’s Privacy and Security Settings.
-        </blockquote>
+          <p
+            >That’s nice, but only a small share of users goes into these settings, let alone
+            understands the privacy implications of disabling third-party cookies.</p
+          >
 
-        <p>That’s nice, but only a small share of users goes into these
-          settings, let alone understands the privacy implications of
-          disabling third-party cookies.</p>
+          <p
+            >There will also be not a lot of incentive for users to turn third-party cookies off, as
+            websites which rely on them will continue to break. With third-party cookies enabled for
+            the majority of users on the web, website vendors have no incentive to build
+            alternatives and ad-networks still have free reign to track users.</p
+          >
 
-        <p>There will also be not a lot of incentive for users to turn
-          third-party cookies off, as websites which rely on them will
-          continue to break. With third-party cookies enabled for the majority
-          of users on the web, website vendors have no incentive to build
-          alternatives and ad-networks still have free reign to track
-          users.</p>
+          <h2>Read more</h2>
+          <ul>
+            <li>
+              <a
+                href="https://arstechnica.com/gadgets/2025/04/google-wont-ditch-third-party-cookies-in-chrome-after-all/"
+              >
+                Ars Technica - Google won't ditch third-party cookies in Chrome after all
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.forbes.com/sites/zakdoffman/2025/04/22/google-suddenly-confirms-new-tracking-nightmare-for-all-chrome-users/"
+              >
+                Forbes - Google Confirms Bad News For All Chrome Users — You Will Be Tracked
+              </a>
+            </li>
+          </ul>
+        </div>
+      </blog-post>
+    </main>
 
-        <h2>Read more</h2>
-        <ul>
-          <li>
-            <a href="https://arstechnica.com/gadgets/2025/04/google-wont-ditch-third-party-cookies-in-chrome-after-all/">
-              Ars Technica - Google won't ditch third-party cookies in Chrome after all
-            </a>
-          </li>
-          <li>
-            <a href="https://www.forbes.com/sites/zakdoffman/2025/04/22/google-suddenly-confirms-new-tracking-nightmare-for-all-chrome-users/">
-              Forbes - Google Confirms Bad News For All Chrome Users — You Will Be Tracked
-            </a>
-          </li>
-        </ul>
-      </div>
-    </blog-post>
-  </main>
-
-  <aside>
-    <pixel-cat></pixel-cat>
-  </aside>
-</body>
-
+    <aside>
+      <pixel-cat></pixel-cat>
+    </aside>
+  </body>
 </html>

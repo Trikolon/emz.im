@@ -2,11 +2,11 @@ import { LitElement, html, css } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import "./lightbox-dialog";
 import { photos } from "./assets/photos";
+import { buildPhotoRoute, extractPhotoIdFromPath } from "./photo-route";
 import type { GalleryImage, LightboxImageChangeEvent } from "./types";
 import type { LightboxDialog } from "./lightbox-dialog";
 
-// URL parameter name for deep linking to specific images.
-const IMAGE_URL_PARAM = "id";
+const APP_BASE_PATH = (import.meta.env.BASE_URL ?? "/") as string;
 
 @customElement("photo-gallery")
 export class PhotoGallery extends LitElement {
@@ -129,38 +129,37 @@ export class PhotoGallery extends LitElement {
     this.lightbox.show(true);
   }
 
-  /**
-   * Sets the image ID in the URL parameters for deep linking.
-   * @param image - The gallery image to set in the URL, or null to clear.
-   */
   private setImageRoute(image: GalleryImage | null) {
-    const url = new URL(window.location.href);
-    if (image) {
-      url.searchParams.set(IMAGE_URL_PARAM, image.id);
-    } else {
-      url.searchParams.delete(IMAGE_URL_PARAM);
-    }
-    window.history.replaceState({}, "", url.toString());
+    const targetPath = image ? this.buildPhotoHref(image.id) : this.buildPhotoHref();
+    this.replaceHistoryPath(targetPath);
   }
 
   /**
-   * Retrieves the image from the URL parameters.
-   * Side effect: If the image ID is invalid, resets image param in the URL.
+   * Retrieves the image based on the current path (or legacy query parameter).
+   * Side effect: If the image ID is invalid, resets the route.
    * @returns The image and its index, or null if not found.
    */
   private getImageFromRoute(): { image: GalleryImage; index: number } | null {
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageId = urlParams.get(IMAGE_URL_PARAM);
+    const imageIdFromPath = extractPhotoIdFromPath(window.location.pathname, APP_BASE_PATH);
+    const legacyImageId = this.getLegacyImageId();
+    const imageId = imageIdFromPath ?? legacyImageId;
     if (!imageId) {
       return null;
     }
-    // Found an image id. Look it up in the map.
+
     const image = this.imageMap.get(imageId);
     if (!image) {
       // Invalid image id, reset route and return null.
       this.setImageRoute(null);
       return null;
     }
+
+    // If the user visited an old query parameter link, rewrite it to the path
+    // based format to keep URLs consistent.
+    if (!imageIdFromPath && legacyImageId) {
+      this.setImageRoute(image.image);
+    }
+
     return image;
   }
 
@@ -237,7 +236,10 @@ export class PhotoGallery extends LitElement {
   private renderGalleryItem(image: GalleryImage, index: number) {
     return html`
       <div class="gallery-item">
-        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, index)}">
+        <a
+          href="${this.buildPhotoHref(image.id)}"
+          @click="${(e: Event) => this.handleImageClick(e, index)}"
+        >
           <img
             id="${image.id}"
             src="${image.thumbnail}"
@@ -272,5 +274,24 @@ export class PhotoGallery extends LitElement {
         @image-changed="${(e: LightboxImageChangeEvent) => this.handleLightboxImageChanged(e)}"
       ></lightbox-dialog>
     `;
+  }
+
+  private buildPhotoHref(imageId?: string) {
+    return buildPhotoRoute(APP_BASE_PATH, imageId);
+  }
+
+  private getLegacyImageId(): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("id");
+  }
+
+  private replaceHistoryPath(targetPath: string) {
+    const url = new URL(window.location.href);
+    if (url.pathname === targetPath && !url.searchParams.has("id")) {
+      return;
+    }
+    url.pathname = targetPath;
+    url.searchParams.delete("id");
+    window.history.replaceState({}, "", url.toString());
   }
 }
