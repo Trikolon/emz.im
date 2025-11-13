@@ -1,4 +1,2 @@
-/photos        /photos.html              200
-/photos/       /photos.html              200
-/photos/:slug  /photos/:slug/index.html  200
-/photos/:slug/ /photos/:slug/index.html  200
+/photos        /photos/index.html  200
+/photos/       /photos/index.html  200

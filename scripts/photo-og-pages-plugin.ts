@@ -125,6 +125,13 @@ async function generatePhotoPages({ config, siteUrl, galleryPage }: GeneratePage
     });
 
   await Promise.all(tasks);
+
+  // Ensure /photos/ resolves without redirects by copying the gallery entry HTML
+  // into dist/photos/index.html alongside the per-photo pages.
+  const galleryOutputDir = path.join(outDir, "photos");
+  await mkdir(galleryOutputDir, { recursive: true });
+  await writeFile(path.join(galleryOutputDir, "index.html"), galleryEntryHtml, "utf8");
+
   logger.info(`[photo-og-pages] Generated ${tasks.length} Open Graph photo pages`);
 }
 
