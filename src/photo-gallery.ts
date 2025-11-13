@@ -13,6 +13,9 @@ export class PhotoGallery extends LitElement {
   @query("lightbox-dialog")
   private lightbox!: LightboxDialog;
 
+  // Check user's motion preference.
+  private prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // Sort images by date in descending order (newest first).
   private imagesSorted: GalleryImage[] = [...photos].sort(
     (a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0),
@@ -164,10 +167,26 @@ export class PhotoGallery extends LitElement {
   /**
    * Scrolls the specified image into view within the gallery.
    * @param image - The gallery image to scroll into view.
+   * @param preferSmooth - Whether to prefer smooth scrolling.
+   * Will ignore if prefersReducedMotion is true.
    */
-  private scrollImageIntoView(image: GalleryImage) {
+  private scrollImageIntoView(image: GalleryImage, preferSmooth: boolean) {
     const imgElement = this.renderRoot.querySelector(`#${image.id}`);
-    imgElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!imgElement) {
+      return;
+    }
+
+    let behavior: ScrollBehavior;
+    if (this.prefersReducedMotion) {
+      behavior = "auto";
+    } else {
+      behavior = preferSmooth ? "smooth" : "auto";
+    }
+
+    imgElement.scrollIntoView({
+      behavior,
+      block: "center",
+    });
   }
 
   /**
@@ -181,7 +200,7 @@ export class PhotoGallery extends LitElement {
     // In the background scroll image into view in the gallery. Don't scroll if
     // the user clicked the image to open the lightbox as that can be confusing.
     if (image && !e.detail.fromGalleryClick) {
-      this.scrollImageIntoView(image);
+      this.scrollImageIntoView(image, true);
     }
   }
 
@@ -201,7 +220,7 @@ export class PhotoGallery extends LitElement {
     }
 
     // Scroll to image in the gallery.
-    this.scrollImageIntoView(imageData.image);
+    this.scrollImageIntoView(imageData.image, false);
 
     // Open lightbox at the specified image.
     this.lightbox.currentIndex = imageData.index;
