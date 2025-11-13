@@ -27,6 +27,12 @@ You can auto format code via:
 npm run prettier
 ```
 
+You can lint code via:
+
+```bash
+npm run lint
+```
+
 ### Building for Production
 
 To create a production build:
