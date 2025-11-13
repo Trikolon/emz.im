@@ -56,12 +56,9 @@ export class PixelCat extends LitElement {
 
   constructor() {
     super();
-    this.sleeping = false;
     this.initialTimeout = null;
     this.wakeUpTimeout = null;
     this.animationInterval = null;
-    this.currentAnimation = catSleep;
-    this.hidden = false;
   }
 
   protected firstUpdated(): void {
@@ -75,7 +72,7 @@ export class PixelCat extends LitElement {
         src="${this.currentAnimation}"
         alt="Charlie the Cat"
         title="Dismiss Charlie the cat"
-        @click=${this.dismiss}
+        @click=${() => this.dismiss()}
         @keydown=${(e: KeyboardEvent) => e.key === "Enter" && this.dismiss()}
         tabindex="0"
         role="button"

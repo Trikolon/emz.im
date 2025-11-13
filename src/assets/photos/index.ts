@@ -1,4 +1,4 @@
-import { GalleryImage } from "../../types";
+import type { GalleryImage } from "../../types";
 import { photoMetadata } from "./photo-metadata";
 
 /**
@@ -24,25 +24,25 @@ export interface PhotoMetadataGenerated {
 }
 
 // Import all full-size images, thumbnails, and metadata using glob imports
-const fullSizeImages = import.meta.glob("./full-size/*.avif", { eager: true }) as Record<
-  string,
-  { default: string }
->;
-const thumbnails = import.meta.glob("./thumbnails/*.avif", { eager: true }) as Record<
-  string,
-  { default: string }
->;
-const metadata = import.meta.glob("./meta/*.json", { eager: true }) as Record<
-  string,
-  { default: PhotoMetadataGenerated }
->;
+const fullSizeImages: Record<string, { default: string }> = import.meta.glob("./full-size/*.avif", {
+  eager: true,
+});
+const thumbnails: Record<string, { default: string }> = import.meta.glob("./thumbnails/*.avif", {
+  eager: true,
+});
+const metadata: Record<string, { default: PhotoMetadataGenerated }> = import.meta.glob(
+  "./meta/*.json",
+  { eager: true },
+);
 
 /**
  * Collection of all gallery photos with their metadata
  */
 export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => {
-  const name = path.split("/").pop()?.replace(".avif", "") || "";
-  const metaGenerated = metadata[`./meta/${name}.json`]?.default;
+  const name = path.split("/").pop()?.replace(".avif", "") ?? "";
+  const metaGenerated = metadata[`./meta/${name}.json`]?.default as
+    | PhotoMetadataGenerated
+    | undefined;
   const metaCustom = photoMetadata[name] ?? {};
 
   if (!metaGenerated) {

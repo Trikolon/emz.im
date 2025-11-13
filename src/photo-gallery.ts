@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import "./lightbox-dialog";
 import { photos } from "./assets/photos";
-import { GalleryImage, LightboxImageChangeEvent } from "./types";
+import type { GalleryImage, LightboxImageChangeEvent } from "./types";
 import type { LightboxDialog } from "./lightbox-dialog";
 
 // URL parameter name for deep linking to specific images.
@@ -20,7 +20,7 @@ export class PhotoGallery extends LitElement {
 
   // Map of image ID to {image, index} for quick lookup. Derived from sorted
   // array to maintain consistency with the order used for lightbox indices.
-  private imageMap: Map<string, { image: GalleryImage; index: number }> = new Map(
+  private imageMap = new Map<string, { image: GalleryImage; index: number }>(
     this.imagesSorted.map((img, index) => [img.id, { image: img, index }]),
   );
 
@@ -152,7 +152,7 @@ export class PhotoGallery extends LitElement {
       return null;
     }
     // Found an image id. Look it up in the map.
-    let image = this.imageMap.get(imageId);
+    const image = this.imageMap.get(imageId);
     if (!image) {
       // Invalid image id, reset route and return null.
       this.setImageRoute(null);
@@ -175,7 +175,7 @@ export class PhotoGallery extends LitElement {
    * @param e
    */
   private handleLightboxImageChanged(e: LightboxImageChangeEvent) {
-    const image = e.detail.image as GalleryImage | null;
+    const image = e.detail.image;
     this.setImageRoute(image);
 
     // In the background scroll image into view in the gallery. Don't scroll if
@@ -189,7 +189,7 @@ export class PhotoGallery extends LitElement {
    * On first update init the lightbox dialog and show it if the URL has a photo
    * parameter.
    */
-  async firstUpdated(): Promise<void> {
+  firstUpdated(): void {
     // Ensure lightbox has the full image list.
     this.lightbox.images = this.imagesSorted;
 
@@ -207,8 +207,9 @@ export class PhotoGallery extends LitElement {
     this.lightbox.currentIndex = imageData.index;
     // The lightbox may not be ready yet. Wait for it to finish rendering
     // before calling show().
-    await this.lightbox.updateComplete;
-    this.lightbox.show();
+    void this.lightbox.updateComplete.then(() => {
+      this.lightbox.show();
+    });
   }
 
   /**
@@ -248,7 +249,9 @@ export class PhotoGallery extends LitElement {
       <div class="gallery">
         ${this.imagesSorted.map((image, index) => this.renderGalleryItem(image, index))}
       </div>
-      <lightbox-dialog @image-changed="${this.handleLightboxImageChanged}"></lightbox-dialog>
+      <lightbox-dialog
+        @image-changed="${(e: LightboxImageChangeEvent) => this.handleLightboxImageChanged(e)}"
+      ></lightbox-dialog>
     `;
   }
 }

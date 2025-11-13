@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import "./photo-info-panel";
 import { classMap } from "lit/directives/class-map.js";
-import { GalleryImage, LightboxImageChangeDetail } from "./types";
+import type { GalleryImage, LightboxImageChangeDetail } from "./types";
 
 @customElement("lightbox-dialog")
 export class LightboxDialog extends LitElement {
@@ -225,7 +225,7 @@ export class LightboxDialog extends LitElement {
     }
   }
 
-  show(fromGalleryClick: boolean = false) {
+  show(fromGalleryClick = false) {
     this.isLoading = true;
     this.showLoadingSpinner = false;
 
@@ -268,7 +268,7 @@ export class LightboxDialog extends LitElement {
         src="${image.src}"
         alt="${image.alt}"
         title="${image.title}"
-        @load="${this.onImageLoad}"
+        @load="${() => this.onImageLoad()}"
         class=${classMap({
           loaded: !this.isLoading,
         })}
@@ -286,14 +286,16 @@ export class LightboxDialog extends LitElement {
 
     return html`
       <dialog
-        @click="${this.onCloseButtonClick}"
-        @close="${this.onDialogClose}"
-        @keydown="${this.handleKeydown}"
+        @click="${(e: MouseEvent) => this.onCloseButtonClick(e)}"
+        @close="${() => this.onDialogClose()}"
+        @keydown="${(e: KeyboardEvent) => this.handleKeydown(e)}"
         aria-label="Photo Lightbox: ${image?.title ?? "Photo"}"
       >
         <div class="controls">
-          <button @click="${this.onCloseButtonClick}" title="Close">close</button>
-          <button @click="${this.toggleInfo}" title="Show photo info">info</button>
+          <button @click="${(e: MouseEvent) => this.onCloseButtonClick(e)}" title="Close"
+            >close</button
+          >
+          <button @click="${() => this.toggleInfo()}" title="Show photo info">info</button>
         </div>
         <div
           class=${classMap({

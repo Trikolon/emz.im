@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AdvancedPhotoMetadata } from "./types";
+import type { AdvancedPhotoMetadata } from "./types";
 
 @customElement("photo-info-panel")
 export class PhotoInfoPanel extends LitElement {

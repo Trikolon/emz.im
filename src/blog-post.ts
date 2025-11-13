@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { ReactiveController, ReactiveControllerHost } from "@lit/reactive-element";
-import { TemplateResult } from "lit";
+import type { ReactiveController, ReactiveControllerHost } from "@lit/reactive-element";
+import type { TemplateResult } from "lit";
 
 // Controller to rewrite external links to open in a new tab and apply security best practices.
 class ExternalLinksController implements ReactiveController {
@@ -44,21 +44,23 @@ class ExternalLinksController implements ReactiveController {
    * Rewrites external links when the slot changes.
    */
   handleSlotChange = (): void => {
-    const slot = this.host.shadowRoot?.querySelector('slot[name="body"]') as HTMLSlotElement;
-    if (slot) {
-      slot.assignedElements().forEach((element) => {
-        const links = element.querySelectorAll("a");
-        Array.from(links)
-          .filter((link) => {
-            const href = link.getAttribute("href");
-            return href && this.isExternalLink(href);
-          })
-          .forEach((link) => {
-            link.setAttribute("target", "_blank");
-            link.setAttribute("rel", "noopener noreferrer");
-          });
-      });
+    const slot = this.host.shadowRoot?.querySelector('slot[name="body"]') as HTMLSlotElement | null;
+    if (!slot) {
+      return;
     }
+
+    slot.assignedElements().forEach((element) => {
+      const links = element.querySelectorAll("a");
+      Array.from(links)
+        .filter((link) => {
+          const href = link.getAttribute("href");
+          return href && this.isExternalLink(href);
+        })
+        .forEach((link) => {
+          link.setAttribute("target", "_blank");
+          link.setAttribute("rel", "noopener noreferrer");
+        });
+    });
   };
 }
 
