@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "type": "module",
   "site": {
-    "url": "https://emz.im"
+    "url": "https://emz.im",
+    "authorName": "Emma Zühlcke"
   },
   "scripts": {
     "prettier": "prettier --config .prettierrc '{src,scripts}/**/*.{ts,js,cjs}' --write",

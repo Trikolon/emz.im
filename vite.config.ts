@@ -20,15 +20,23 @@ const require = createRequire(import.meta.url);
 interface PackageMetadata {
   site?: {
     url?: string;
+    authorName?: string;
   };
 }
 
 const packageMetadata = require("./package.json") as PackageMetadata;
-const packageSiteUrl = packageMetadata.site?.url;
+const packageSite = packageMetadata.site;
+const packageSiteUrl = packageSite?.url;
 if (!packageSiteUrl) {
   throw new Error('Missing "site.url" in package.json');
 }
 const DEFAULT_SITE_URL = packageSiteUrl;
+
+const packageAuthorName = packageSite?.authorName;
+if (!packageAuthorName) {
+  throw new Error('Missing "site.authorName" in package.json');
+}
+const DEFAULT_AUTHOR_NAME = packageAuthorName;
 
 interface RawPhotoMetadata {
   ObjectName?: string;
@@ -179,7 +187,7 @@ const photoOgPagesPlugin = (): Plugin => {
         }
 
         const titleElement = head.querySelector("title");
-        const titleText = `${photo.title} – Photos – Emma Zühlcke`;
+        const titleText = `${photo.title} – Photos – ${DEFAULT_AUTHOR_NAME}`;
         if (titleElement) {
           titleElement.set_content(titleText);
         } else {
@@ -188,7 +196,7 @@ const photoOgPagesPlugin = (): Plugin => {
           head.appendChild(newTitle);
         }
 
-        const description = `Photo titled “${photo.title}” from Emma Zühlcke's collection.`;
+        const description = `Photo titled “${photo.title}” from ${DEFAULT_AUTHOR_NAME}'s collection.`;
         const descriptionMeta = head.querySelector('meta[name="description"]');
         if (descriptionMeta) {
           descriptionMeta.setAttribute("content", description);
@@ -214,7 +222,7 @@ const photoOgPagesPlugin = (): Plugin => {
         const metaEntries: Record<string, string>[] = [
           { property: "og:title", content: titleText },
           { property: "og:type", content: "article" },
-          { property: "og:site_name", content: "Emma Zühlcke" },
+          { property: "og:site_name", content: DEFAULT_AUTHOR_NAME },
           { property: "og:url", content: canonicalUrl },
           { property: "og:description", content: description },
           { property: "og:image", content: ogImageUrl },
