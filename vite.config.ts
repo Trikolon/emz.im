@@ -1,14 +1,8 @@
 import { defineConfig } from 'vite'
-import type { Plugin } from 'vite'
+import type { Connect, Plugin } from 'vite'
 
 const PHOTOS_BASE_PATH = '/photos'
 const PHOTOS_ENTRYPOINT = '/photos.html'
-
-interface MiddlewareRequest {
-  url?: string | null
-}
-
-type NextFunction = () => void
 
 /**
  * Detects whether the provided path ends with a file extension.
@@ -37,17 +31,19 @@ const shouldRewriteToPhotosEntry = (pathname: string): boolean => {
  * Creates a Vite connect middleware that rewrites nested /photos/* paths
  * to the photos entrypoint so deep links work in dev/preview servers.
  */
-const createPhotosRewriteMiddleware = () => {
-  return (req: MiddlewareRequest, _res: unknown, next: NextFunction) => {
-    if (!req.url) {
+const createPhotosRewriteMiddleware = (): Connect.NextHandleFunction => {
+  return (req, _res, next) => {
+    const mutableRequest = req as { url?: string | null }
+    const requestUrl = mutableRequest.url
+    if (typeof requestUrl !== 'string') {
       next()
       return
     }
 
     try {
-      const parsedUrl = new URL(req.url, 'http://localhost')
+      const parsedUrl = new URL(requestUrl, 'http://localhost')
       if (shouldRewriteToPhotosEntry(parsedUrl.pathname)) {
-        req.url = `${PHOTOS_ENTRYPOINT}${parsedUrl.search}`
+        mutableRequest.url = `${PHOTOS_ENTRYPOINT}${parsedUrl.search}`
       }
     } catch {
       // Ignore parse errors and continue to the next middleware.
