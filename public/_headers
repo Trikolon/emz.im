@@ -9,3 +9,6 @@
 
 /*.html
   Cache-Control: public, no-cache, must-revalidate
+
+/photos/*
+  Cache-Control: public, no-cache, must-revalidate
