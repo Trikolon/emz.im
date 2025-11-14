@@ -5,8 +5,7 @@ import { photos } from "./assets/photos";
 import type { GalleryImage, LightboxImageChangeEvent } from "./types";
 import type { LightboxDialog } from "./lightbox-dialog";
 
-// URL parameter name for deep linking to specific images.
-const IMAGE_URL_PARAM = "id";
+const PHOTOS_PATH_SEGMENT = "/photos";
 
 @customElement("photo-gallery")
 export class PhotoGallery extends LitElement {
@@ -26,6 +25,62 @@ export class PhotoGallery extends LitElement {
   private imageMap = new Map<string, { image: GalleryImage; index: number }>(
     this.imagesSorted.map((img, index) => [img.id, { image: img, index }]),
   );
+
+  /**
+   * Determines the base URL path segment that hosts the gallery page.
+   * Accounts for deployments where the site might serve under a subdirectory.
+   * @returns The gallery base path.
+   */
+  private getGalleryBasePath(): string {
+    const { pathname } = window.location;
+    const photosIndex = pathname.indexOf(PHOTOS_PATH_SEGMENT);
+
+    if (photosIndex === -1) {
+      const normalized = pathname.replace(/\/+$/, "");
+      return normalized || "/";
+    }
+
+    return pathname.slice(0, photosIndex + PHOTOS_PATH_SEGMENT.length);
+  }
+
+  /**
+   * Builds a normalized path for an image slug relative to the gallery base path.
+   * @param imageId - Optional image identifier to append to the path.
+   * @returns The constructed image path.
+   */
+  private buildImagePath(imageId?: string | null): string {
+    const basePath = this.getGalleryBasePath();
+    if (!imageId) {
+      return basePath.endsWith("/") && basePath !== "/" ? basePath.slice(0, -1) : basePath;
+    }
+
+    const normalizedBase = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+    return `${normalizedBase}/${encodeURIComponent(imageId)}`;
+  }
+
+  /**
+   * Extracts a photo ID slug from the window location path if present.
+   * @returns The decoded photo ID or null when none exists.
+   */
+  private getImageIdFromPath(): string | null {
+    const { pathname } = window.location;
+    const photosIndex = pathname.indexOf(PHOTOS_PATH_SEGMENT);
+    if (photosIndex === -1) {
+      return null;
+    }
+
+    const remainder = pathname.slice(photosIndex + PHOTOS_PATH_SEGMENT.length);
+    const slug = remainder.split("/").find((segment) => Boolean(segment));
+    if (!slug) {
+      return null;
+    }
+
+    try {
+      return decodeURIComponent(slug);
+    } catch {
+      return null;
+    }
+  }
 
   static readonly styles = css`
     /* Use the same link styling as the rest of the site */
@@ -130,27 +185,22 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
-   * Sets the image ID in the URL parameters for deep linking.
+   * Updates the browser path to reflect the current image selection.
    * @param image - The gallery image to set in the URL, or null to clear.
    */
   private setImageRoute(image: GalleryImage | null) {
     const url = new URL(window.location.href);
-    if (image) {
-      url.searchParams.set(IMAGE_URL_PARAM, image.id);
-    } else {
-      url.searchParams.delete(IMAGE_URL_PARAM);
-    }
+    url.pathname = this.buildImagePath(image?.id);
     window.history.replaceState({}, "", url.toString());
   }
 
   /**
-   * Retrieves the image from the URL parameters.
-   * Side effect: If the image ID is invalid, resets image param in the URL.
+   * Retrieves the image from the URL path.
+   * Side effect: If the image ID is invalid, resets the path to the gallery root.
    * @returns The image and its index, or null if not found.
    */
   private getImageFromRoute(): { image: GalleryImage; index: number } | null {
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageId = urlParams.get(IMAGE_URL_PARAM);
+    const imageId = this.getImageIdFromPath();
     if (!imageId) {
       return null;
     }
@@ -206,7 +256,7 @@ export class PhotoGallery extends LitElement {
 
   /**
    * On first update init the lightbox dialog and show it if the URL has a photo
-   * parameter.
+   * slug in the path.
    */
   firstUpdated(): void {
     // Ensure lightbox has the full image list.

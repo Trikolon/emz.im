@@ -1,0 +1,2 @@
+/photos /photos.html 200
+/photos/* /photos.html 200
