@@ -31,12 +31,8 @@ interface PhotoPageEntry {
 /**
  * Normalizes SITE_URL overrides while falling back to the production URL.
  */
-const sanitizeSiteUrl = (value: string): string => {
-  if (!value) {
-    return DEFAULT_SITE_URL;
-  }
-  return value.endsWith("/") ? value.slice(0, -1) : value;
-};
+const sanitizeSiteUrl = (value: string | undefined): string =>
+  value ? (value.endsWith("/") ? value.slice(0, -1) : value) : DEFAULT_SITE_URL;
 
 /**
  * Ensures the resolved Vite base can safely be concatenated into emitted paths.
@@ -154,7 +150,9 @@ const photoOgPagesPlugin = (): Plugin => {
         typeof templateAsset.source === "string"
           ? templateAsset.source
           : Buffer.from(templateAsset.source).toString("utf8");
-      const siteUrl = sanitizeSiteUrl(process.env.SITE_URL ?? DEFAULT_SITE_URL);
+      const siteUrl = sanitizeSiteUrl(
+        process.env.SITE_URL ?? process.env.CF_PAGES_URL ?? process.env.DEPLOYMENT_URL,
+      );
       const basePath = normalizeBasePath(resolvedConfig.base);
       const fullSizeAssets = getFullSizeAssetPathMap(bundle, basePath);
 
