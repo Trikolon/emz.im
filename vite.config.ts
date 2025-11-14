@@ -221,7 +221,7 @@ const photoOgPagesPlugin = (): Plugin => {
         const ogImageUrl = `${siteUrl}${ogImagePath}`;
         const metaEntries: Record<string, string>[] = [
           { property: "og:title", content: titleText },
-          { property: "og:type", content: "article" },
+          { property: "og:type", content: "photo" },
           { property: "og:site_name", content: DEFAULT_AUTHOR_NAME },
           { property: "og:url", content: canonicalUrl },
           { property: "og:description", content: description },
