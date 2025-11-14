@@ -1,14 +1,223 @@
-import { defineConfig } from 'vite'
-import type { Connect, Plugin } from 'vite'
+import path from "node:path";
+import { readFile, readdir } from "node:fs/promises";
+import { parse, HTMLElement } from "node-html-parser";
+import { defineConfig } from "vite";
+import type { Connect, Plugin, ResolvedConfig } from "vite";
 
-const PHOTOS_BASE_PATH = '/photos'
-const PHOTOS_ENTRYPOINT = '/photos.html'
+/**
+ * Shared path constants so both dev middleware and the OG plugin behave the same.
+ */
+const PHOTOS_BASE_PATH = "/photos";
+const PHOTOS_ENTRYPOINT = "/photos.html";
+const PHOTOS_TEMPLATE = "photos.html";
+const PHOTO_META_DIR = "src/assets/photos/meta";
+const PHOTO_FULLSIZE_DIR = "src/assets/photos/full-size";
+const DEFAULT_SITE_URL = "https://emz.im";
+
+interface RawPhotoMetadata {
+  ObjectName?: string;
+  Caption?: string;
+  DateTimeOriginal?: string;
+}
+
+interface PhotoPageEntry {
+  id: string;
+  title: string;
+  caption: string;
+  dateIso?: string;
+}
+
+/**
+ * Normalizes SITE_URL overrides while falling back to the production URL.
+ */
+const sanitizeSiteUrl = (value: string): string => {
+  if (!value) {
+    return DEFAULT_SITE_URL;
+  }
+  return value.endsWith("/") ? value.slice(0, -1) : value;
+};
+
+/**
+ * Ensures the resolved Vite base can safely be concatenated into emitted paths.
+ */
+const normalizeBasePath = (base: string | undefined): string => {
+  if (!base || base === "./") {
+    return "";
+  }
+  return base.endsWith("/") ? base.slice(0, -1) : base;
+};
+
+/**
+ * Builds `/photos/<slug>` URLs that respect custom base paths (e.g. GitHub Pages).
+ */
+const encodePhotoPath = (basePath: string, id: string): string =>
+  `${basePath}${PHOTOS_BASE_PATH}/${encodeURIComponent(id)}`;
+
+/**
+ * Minimal helper around node-html-parser so meta tags are always created uniformly.
+ */
+const createElement = (tagName: string, attributes: Record<string, string>): HTMLElement => {
+  const element = new HTMLElement(tagName, {});
+  for (const [key, value] of Object.entries(attributes)) {
+    if (value) {
+      element.setAttribute(key, value);
+    }
+  }
+  return element;
+};
+
+/**
+ * Reads all generated EXIF JSON files and returns the info needed for OG pages.
+ */
+const readPhotoEntries = async (rootDir: string): Promise<PhotoPageEntry[]> => {
+  const directory = path.resolve(rootDir, PHOTO_META_DIR);
+  const files = await readdir(directory);
+  const entries: PhotoPageEntry[] = [];
+
+  for (const file of files) {
+    if (!file.endsWith(".json")) {
+      continue;
+    }
+    const id = file.slice(0, -5);
+    const filePath = path.join(directory, file);
+    const data = JSON.parse(await readFile(filePath, "utf8")) as RawPhotoMetadata;
+    const title = (data.ObjectName?.trim() ?? id) || id;
+    const caption = data.Caption?.trim() ?? title;
+    entries.push({
+      id,
+      title,
+      caption,
+      dateIso: data.DateTimeOriginal,
+    });
+  }
+
+  entries.sort((a, b) => a.id.localeCompare(b.id));
+  return entries;
+};
+
+/**
+ * Post-build plugin that clones the compiled photos.html for each image so deep links
+ * have static OG markup when crawlers hit them.
+ */
+const photoOgPagesPlugin = (): Plugin => {
+  let resolvedConfig: ResolvedConfig | null = null;
+  return {
+    name: "photo-og-pages",
+    apply: "build",
+    enforce: "post",
+    configResolved(config) {
+      resolvedConfig = config;
+    },
+    async generateBundle(_options, bundle) {
+      if (!resolvedConfig) {
+        return;
+      }
+
+      const templateAsset = bundle[PHOTOS_TEMPLATE];
+      if (templateAsset?.type !== "asset" || templateAsset.source == null) {
+        throw new Error(`Missing compiled template ${PHOTOS_TEMPLATE}`);
+      }
+
+      const photoEntries = await readPhotoEntries(resolvedConfig.root);
+      if (photoEntries.length === 0) {
+        return;
+      }
+
+      const templateHtml =
+        typeof templateAsset.source === "string"
+          ? templateAsset.source
+          : Buffer.from(templateAsset.source).toString("utf8");
+      const siteUrl = sanitizeSiteUrl(process.env.SITE_URL ?? DEFAULT_SITE_URL);
+      const basePath = normalizeBasePath(resolvedConfig.base);
+
+      for (const photo of photoEntries) {
+        const document = parse(templateHtml);
+        const head = document.querySelector("head");
+        if (!head) {
+          throw new Error("photos.html is missing a <head> block");
+        }
+
+        const titleElement = head.querySelector("title");
+        const titleText = `${photo.title} – Photos – Emma Zühlcke`;
+        if (titleElement) {
+          titleElement.set_content(titleText);
+        } else {
+          const newTitle = createElement("title", {});
+          newTitle.set_content(titleText);
+          head.appendChild(newTitle);
+        }
+
+        const description = `Photo titled “${photo.title}” from Emma Zühlcke's collection.`;
+        const descriptionMeta = head.querySelector('meta[name="description"]');
+        if (descriptionMeta) {
+          descriptionMeta.setAttribute("content", description);
+        } else {
+          head.appendChild(createElement("meta", { name: "description", content: description }));
+        }
+
+        const canonicalPath = encodePhotoPath(basePath, photo.id);
+        const canonicalUrl = `${siteUrl}${canonicalPath}`;
+        let canonicalLink = head.querySelector('link[rel="canonical"]');
+        if (!canonicalLink) {
+          canonicalLink = createElement("link", { rel: "canonical" });
+          head.appendChild(canonicalLink);
+        }
+        canonicalLink.setAttribute("href", canonicalUrl);
+
+        const imagePath = `${basePath}/photos/og/${encodeURIComponent(photo.id)}.avif`;
+        const ogImageUrl = `${siteUrl}${imagePath}`;
+        const metaEntries: Record<string, string>[] = [
+          { property: "og:title", content: titleText },
+          { property: "og:type", content: "article" },
+          { property: "og:site_name", content: "Emma Zühlcke" },
+          { property: "og:url", content: canonicalUrl },
+          { property: "og:description", content: description },
+          { property: "og:image", content: ogImageUrl },
+          { property: "og:image:type", content: "image/avif" },
+          { property: "og:image:alt", content: photo.caption },
+          { name: "twitter:card", content: "summary_large_image" },
+          { name: "twitter:title", content: titleText },
+          { name: "twitter:description", content: description },
+          { name: "twitter:image", content: ogImageUrl },
+          { name: "twitter:image:alt", content: photo.caption },
+        ];
+
+        if (photo.dateIso) {
+          metaEntries.push({ property: "article:published_time", content: photo.dateIso });
+        }
+
+        for (const attributes of metaEntries) {
+          head.appendChild(createElement("meta", attributes));
+        }
+
+        const pageHtml = document.toString();
+        this.emitFile({
+          type: "asset",
+          fileName: `photos/${photo.id}/index.html`,
+          source: pageHtml,
+        });
+
+        const fullSizePath = path.resolve(
+          resolvedConfig.root,
+          PHOTO_FULLSIZE_DIR,
+          `${photo.id}.avif`,
+        );
+        const imageBuffer = await readFile(fullSizePath);
+        this.emitFile({
+          type: "asset",
+          fileName: `photos/og/${photo.id}.avif`,
+          source: imageBuffer,
+        });
+      }
+    },
+  };
+};
 
 /**
  * Detects whether the provided path ends with a file extension.
  * Used to avoid rewriting asset/file requests to the SPA entry point.
  */
-const hasFileExtension = (pathname: string): boolean => /\.[^/]+$/.test(pathname)
+const hasFileExtension = (pathname: string): boolean => /\.[^/]+$/.test(pathname);
 
 /**
  * Determines if a path should be rewritten to the photos entry point.
@@ -17,15 +226,15 @@ const hasFileExtension = (pathname: string): boolean => /\.[^/]+$/.test(pathname
  */
 const shouldRewriteToPhotosEntry = (pathname: string): boolean => {
   if (pathname === PHOTOS_ENTRYPOINT) {
-    return false
+    return false;
   }
 
   if (pathname === PHOTOS_BASE_PATH || pathname === `${PHOTOS_BASE_PATH}/`) {
-    return true
+    return true;
   }
 
-  return pathname.startsWith(`${PHOTOS_BASE_PATH}/`) && !hasFileExtension(pathname)
-}
+  return pathname.startsWith(`${PHOTOS_BASE_PATH}/`) && !hasFileExtension(pathname);
+};
 
 /**
  * Creates a Vite connect middleware that rewrites nested /photos/* paths
@@ -33,52 +242,52 @@ const shouldRewriteToPhotosEntry = (pathname: string): boolean => {
  */
 const createPhotosRewriteMiddleware = (): Connect.NextHandleFunction => {
   return (req, _res, next) => {
-    const mutableRequest = req as { url?: string | null }
-    const requestUrl = mutableRequest.url
-    if (typeof requestUrl !== 'string') {
-      next()
-      return
+    const mutableRequest = req as { url?: string | null };
+    const requestUrl = mutableRequest.url;
+    if (typeof requestUrl !== "string") {
+      next();
+      return;
     }
 
     try {
-      const parsedUrl = new URL(requestUrl, 'http://localhost')
+      const parsedUrl = new URL(requestUrl, "http://localhost");
       if (shouldRewriteToPhotosEntry(parsedUrl.pathname)) {
-        mutableRequest.url = `${PHOTOS_ENTRYPOINT}${parsedUrl.search}`
+        mutableRequest.url = `${PHOTOS_ENTRYPOINT}${parsedUrl.search}`;
       }
     } catch {
       // Ignore parse errors and continue to the next middleware.
     }
 
-    next()
-  }
-}
+    next();
+  };
+};
 
 /**
  * Registers photo path rewrites for Vite dev/preview servers.
  */
 const photosPathPlugin = (): Plugin => {
-  const middleware = createPhotosRewriteMiddleware()
+  const middleware = createPhotosRewriteMiddleware();
   return {
-    name: 'photos-path-rewrite',
+    name: "photos-path-rewrite",
     configureServer(server) {
-      server.middlewares.use(middleware)
+      server.middlewares.use(middleware);
     },
     configurePreviewServer(server) {
-      server.middlewares.use(middleware)
-    }
-  }
-}
+      server.middlewares.use(middleware);
+    },
+  };
+};
 
 export default defineConfig({
-  plugins: [photosPathPlugin()],
+  plugins: [photosPathPlugin(), photoOgPagesPlugin()],
   build: {
     rollupOptions: {
       input: {
-        main: 'index.html',
-        photos: 'photos.html',
-        blog: 'blog.html',
-        404: '404.html'
-      }
-    }
-  }
-})
+        main: "index.html",
+        photos: "photos.html",
+        blog: "blog.html",
+        404: "404.html",
+      },
+    },
+  },
+});

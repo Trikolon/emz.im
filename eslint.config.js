@@ -72,7 +72,7 @@ export default tseslint.config(
 
   // Ignore patterns
   {
-    ignores: ["dist/", "node_modules/", "*.html", "*.css", "public/", ".github/"],
+    ignores: ["dist/", "node_modules/", "*.html", "*.css", "public/", ".github/", ".wrangler/"],
   },
 
   // Prettier compatibility - must be last
