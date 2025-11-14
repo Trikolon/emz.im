@@ -196,7 +196,7 @@ const photoOgPagesPlugin = (): Plugin => {
           head.appendChild(newTitle);
         }
 
-        const description = `Photo titled “${photo.title}” from ${DEFAULT_AUTHOR_NAME}'s collection.`;
+        const description = `Photo titled “${photo.title}” from ${DEFAULT_AUTHOR_NAME}'s gallery.`;
         const descriptionMeta = head.querySelector('meta[name="description"]');
         if (descriptionMeta) {
           descriptionMeta.setAttribute("content", description);
