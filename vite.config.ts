@@ -1,5 +1,6 @@
 import path from "node:path";
 import { readFile, readdir } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { parse, HTMLElement } from "node-html-parser";
 import { defineConfig } from "vite";
 import type { Connect, Plugin, ResolvedConfig } from "vite";
@@ -13,7 +14,21 @@ const PHOTOS_ENTRYPOINT = "/photos.html";
 const PHOTOS_TEMPLATE = "photos.html";
 const PHOTO_META_DIR = "src/assets/photos/meta";
 const PHOTO_FULLSIZE_DIR = "src/assets/photos/full-size";
-const DEFAULT_SITE_URL = "https://emz.im";
+
+const require = createRequire(import.meta.url);
+
+interface PackageMetadata {
+  site?: {
+    url?: string;
+  };
+}
+
+const packageMetadata = require("./package.json") as PackageMetadata;
+const packageSiteUrl = packageMetadata.site?.url;
+if (!packageSiteUrl) {
+  throw new Error('Missing "site.url" in package.json');
+}
+const DEFAULT_SITE_URL = packageSiteUrl;
 
 interface RawPhotoMetadata {
   ObjectName?: string;

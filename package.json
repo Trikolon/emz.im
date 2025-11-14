@@ -4,6 +4,9 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "site": {
+    "url": "https://emz.im"
+  },
   "scripts": {
     "prettier": "prettier --config .prettierrc '{src,scripts}/**/*.{ts,js,cjs}' --write",
     "eslint": "eslint .",
