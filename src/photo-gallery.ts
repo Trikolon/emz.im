@@ -57,7 +57,7 @@ export class PhotoGallery extends LitElement {
     }
 
     const normalizedBase = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
-    return `${normalizedBase}/${encodeURIComponent(imageId)}`;
+    return `${normalizedBase}/${encodeURIComponent(imageId)}/`;
   }
 
   /**
