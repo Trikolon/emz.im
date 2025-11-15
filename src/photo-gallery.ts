@@ -12,6 +12,8 @@ export class PhotoGallery extends LitElement {
   @query("lightbox-dialog")
   private lightbox!: LightboxDialog;
 
+  private defaultPageTitle = document.title;
+
   // Check user's motion preference.
   private prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -195,6 +197,18 @@ export class PhotoGallery extends LitElement {
   }
 
   /**
+   * Updates the document title based on the active image or resets it.
+   * @param image - The gallery image shown in the lightbox.
+   */
+  private setPageTitle(image: GalleryImage | null) {
+    if (image) {
+      document.title = `${image.title} – ${this.defaultPageTitle}`;
+      return;
+    }
+    document.title = this.defaultPageTitle;
+  }
+
+  /**
    * Retrieves the image from the URL path.
    * Side effect: If the image ID is invalid, resets the path to the gallery root.
    * @returns The image and its index, or null if not found.
@@ -246,6 +260,7 @@ export class PhotoGallery extends LitElement {
   private handleLightboxImageChanged(e: LightboxImageChangeEvent) {
     const image = e.detail.image;
     this.setImageRoute(image);
+    this.setPageTitle(image);
 
     // In the background scroll image into view in the gallery. Don't scroll if
     // the user clicked the image to open the lightbox as that can be confusing.
