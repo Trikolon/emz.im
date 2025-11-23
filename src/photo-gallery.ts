@@ -173,8 +173,17 @@ export class PhotoGallery extends LitElement {
     if (!date) {
       return null;
     }
+    // Short month and year for display.
     const monthYear = date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-    return html`<span class="date">${monthYear}</span>`;
+    // Date to show on hover.
+    const titleDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      year: "numeric",
+    });
+
+    return html`<span title="${titleDate}" class="date">${monthYear}</span>`;
   }
 
   /**
