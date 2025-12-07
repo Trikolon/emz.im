@@ -157,6 +157,8 @@ async function processWithWorkers(files) {
     console.warn(`\nFailed to process ${failed.length} files:`);
     failed.forEach((f) => console.warn(`- ${f.file}: ${f.error}`));
   }
+
+  return results;
 }
 
 /**
@@ -182,7 +184,24 @@ async function convertPhotos() {
     const files = await fs.readdir(SOURCE_DIR);
     const imageFiles = files.filter((file) => !file.startsWith("."));
 
-    await processWithWorkers(imageFiles);
+    const results = await processWithWorkers(imageFiles);
+    const successfullyProcessed = results
+      .filter((result) => result.success)
+      .map((result) => result.file);
+
+    if (successfullyProcessed.length > 0) {
+      console.info(`\nDeleting ${successfullyProcessed.length} processed source file(s)`);
+      await Promise.all(
+        successfullyProcessed.map(async (file) => {
+          const sourceFilePath = path.join(SOURCE_DIR, file);
+          try {
+            await fs.unlink(sourceFilePath);
+          } catch (deleteError) {
+            console.warn(`Warning: Could not delete ${file}: ${deleteError.message}`);
+          }
+        }),
+      );
+    }
 
     console.info("\nConversion completed successfully");
   } catch (error) {

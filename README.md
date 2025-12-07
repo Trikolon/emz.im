@@ -56,6 +56,9 @@ The built files will be in the `dist` directory.
 3. Run the script: `npm run convert-photos`. This converts your images to AVIF
    and compresses them. It also extracts metadata from the images (e.g. EXIF)
    which will be displayed in the photo lightbox.
+   The script deletes each source file after a successful conversion, so only copy
+   images into `scripts/photos/src` when you're ready to add them and keep a backup
+   elsewhere if you need the originals.
 
 4. If your image does not set a "Caption" or you don't want to use it add alt
    text in `src/assets/photos/photo-metadata`. The object key is the file name
@@ -67,5 +70,4 @@ The built files will be in the `dist` directory.
 ### Adding New Blog Posts
 
 Add a new `<blog-post>` element to `blog.html`.
-
 
