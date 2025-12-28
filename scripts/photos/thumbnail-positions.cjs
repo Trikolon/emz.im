@@ -17,4 +17,7 @@ module.exports = {
 
   // Center the "hotel" sign in the frame
   hotel: "top",
+
+  // Focus on the upper part of the tree.
+  "golden-birch": "top",
 };
