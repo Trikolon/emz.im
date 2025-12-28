@@ -52,10 +52,23 @@ interface PhotoPageEntry {
 }
 
 /**
- * Normalizes SITE_URL overrides while falling back to the production URL.
+ * Resolves the canonical site URL for metadata generation.
+ *
+ * Rules:
+ * - On the main branch, always use the package.json default.
+ * - On non-main branches, prefer the Pages preview URL and fall back to package.json.
  */
-const sanitizeSiteUrl = (value: string | undefined): string =>
-  value ? (value.endsWith("/") ? value.slice(0, -1) : value) : DEFAULT_SITE_URL;
+function resolveSiteUrl(): string {
+  const pagesBranch = process.env.CF_PAGES_BRANCH;
+  // Preview deployments have a branch name and a Pages-provided URL.
+  let candidate = DEFAULT_SITE_URL;
+  if (pagesBranch && pagesBranch !== "main") {
+    candidate = process.env.CF_PAGES_URL ?? process.env.DEPLOYMENT_URL ?? DEFAULT_SITE_URL;
+  }
+  const resolved = candidate;
+  // Normalize trailing slash so URL concatenation stays predictable.
+  return resolved.endsWith("/") ? resolved.slice(0, -1) : resolved;
+}
 
 /**
  * Ensures the resolved Vite base can safely be concatenated into emitted paths.
@@ -173,9 +186,7 @@ const photoOgPagesPlugin = (): Plugin => {
         typeof templateAsset.source === "string"
           ? templateAsset.source
           : Buffer.from(templateAsset.source).toString("utf8");
-      const siteUrl = sanitizeSiteUrl(
-        process.env.SITE_URL ?? process.env.CF_PAGES_URL ?? process.env.DEPLOYMENT_URL,
-      );
+      const siteUrl = resolveSiteUrl();
       const basePath = normalizeBasePath(resolvedConfig.base);
       const fullSizeAssets = getFullSizeAssetPathMap(bundle, basePath);
 
