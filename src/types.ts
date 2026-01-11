@@ -1,13 +1,20 @@
 /**
  * Photo gallery image information
  */
+export interface GalleryImageSources {
+  /** AVIF image source */
+  avif: string;
+  /** WebP image source */
+  webp: string;
+}
+
 export interface GalleryImage {
   /** Unique identifier for the image */
   id: string;
   /** Full size image source */
-  src: string;
+  src: GalleryImageSources;
   /** Thumbnail image source */
-  thumbnail: string;
+  thumbnail: GalleryImageSources;
   /** Alt text describing the image */
   alt: string;
   /** Short title for the image */

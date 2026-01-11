@@ -24,12 +24,30 @@ export interface PhotoMetadataGenerated {
 }
 
 // Import all full-size images, thumbnails, and metadata using glob imports
-const fullSizeImages: Record<string, { default: string }> = import.meta.glob("./full-size/*.avif", {
-  eager: true,
-});
-const thumbnails: Record<string, { default: string }> = import.meta.glob("./thumbnails/*.avif", {
-  eager: true,
-});
+const fullSizeAvifImages: Record<string, { default: string }> = import.meta.glob(
+  "./full-size/*.avif",
+  {
+    eager: true,
+  },
+);
+const fullSizeWebpImages: Record<string, { default: string }> = import.meta.glob(
+  "./full-size/*.webp",
+  {
+    eager: true,
+  },
+);
+const thumbnailsAvif: Record<string, { default: string }> = import.meta.glob(
+  "./thumbnails/*.avif",
+  {
+    eager: true,
+  },
+);
+const thumbnailsWebp: Record<string, { default: string }> = import.meta.glob(
+  "./thumbnails/*.webp",
+  {
+    eager: true,
+  },
+);
 const metadata: Record<string, { default: PhotoMetadataGenerated }> = import.meta.glob(
   "./meta/*.json",
   { eager: true },
@@ -38,12 +56,14 @@ const metadata: Record<string, { default: PhotoMetadataGenerated }> = import.met
 /**
  * Collection of all gallery photos with their metadata
  */
-export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => {
+export const photos: GalleryImage[] = Object.keys(fullSizeAvifImages).map((path) => {
   const name = path.split("/").pop()?.replace(".avif", "") ?? "";
   const metaGenerated = metadata[`./meta/${name}.json`]?.default as
     | PhotoMetadataGenerated
     | undefined;
   const metaCustom = photoMetadata[name] ?? {};
+  const fullSizeWebp = fullSizeWebpImages[`./full-size/${name}.webp`]?.default;
+  const thumbnailWebp = thumbnailsWebp[`./thumbnails/${name}.webp`]?.default;
 
   if (!metaGenerated) {
     console.error(`Missing metadata for photo ${name}`, {
@@ -53,11 +73,25 @@ export const photos: GalleryImage[] = Object.keys(fullSizeImages).map((path) => 
     throw new Error(`Missing metadata for photo ${name}`);
   }
 
+  if (!fullSizeWebp || !thumbnailWebp) {
+    console.error(`Missing WebP assets for photo ${name}`, {
+      fullSizeWebp,
+      thumbnailWebp,
+    });
+    throw new Error(`Missing WebP assets for photo ${name}`);
+  }
+
   // Construct gallery image object combining custom metadata and generated metadata.
   return {
     id: name,
-    src: fullSizeImages[path].default,
-    thumbnail: thumbnails[`./thumbnails/${name}.avif`].default,
+    src: {
+      avif: fullSizeAvifImages[path].default,
+      webp: fullSizeWebp,
+    },
+    thumbnail: {
+      avif: thumbnailsAvif[`./thumbnails/${name}.avif`].default,
+      webp: thumbnailWebp,
+    },
     // For alt text use the "Caption" field of the metadata. This isn't ideal
     // but it's the field most suitable for an image description.
     // The alt text can also be overridden by setting "alt" in custom metadata.

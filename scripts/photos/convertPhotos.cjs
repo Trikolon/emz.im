@@ -14,7 +14,7 @@
  *
  * Configuration includes:
  * - Quality settings for full-size and thumbnail images
- * - Output format
+ * - Output formats
  * - Thumbnail dimensions
  * - Which EXIF metadata fields to extract
  *
@@ -35,7 +35,8 @@ const thumbnailPositions = require("./thumbnail-positions.cjs");
 // Configuration
 const QUALITY = 70;
 const THUMBNAIL_QUALITY = 60;
-const DEST_FORMAT = "avif";
+const FULL_SIZE_FORMATS = ["avif", "webp"];
+const THUMBNAIL_FORMATS = ["avif", "webp"];
 const THUMBNAIL_WIDTH = 600;
 const FULL_SIZE_WIDTH = 3840; // 4k
 
@@ -80,7 +81,8 @@ async function createWorker() {
     config: {
       QUALITY,
       THUMBNAIL_QUALITY,
-      DEST_FORMAT,
+      FULL_SIZE_FORMATS,
+      THUMBNAIL_FORMATS,
       THUMBNAIL_WIDTH,
       FULL_SIZE_WIDTH,
       SOURCE_DIR,
@@ -173,7 +175,8 @@ async function convertPhotos() {
     await fs.mkdir(THUMBNAIL_DIR, { recursive: true });
     await fs.mkdir(META_DIR, { recursive: true });
 
-    console.info(`Converting images to ${DEST_FORMAT}`);
+    console.info(`Full size formats: ${FULL_SIZE_FORMATS.join(", ")}`);
+    console.info(`Thumbnail formats: ${THUMBNAIL_FORMATS.join(", ")}`);
     console.info(`Using ${WORKER_COUNT} worker threads`);
     console.info(`Full size quality: ${QUALITY}`);
     console.info(`Thumbnail quality: ${THUMBNAIL_QUALITY}`);

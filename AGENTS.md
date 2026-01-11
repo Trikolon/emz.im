@@ -3,7 +3,7 @@
 ## Project Summary
 - Personal website (home, blog, photos) built with Vite + Lit.
 - Static HTML entry points with Lit web components and TypeScript.
-- Photo gallery pipeline generates AVIF assets and EXIF metadata.
+- Photo gallery pipeline generates AVIF/WebP assets and EXIF metadata.
 
 ## Tech Stack
 - Frontend: TypeScript, Lit web components, vanilla HTML/CSS.
@@ -31,7 +31,7 @@
 ## Photo Data Flow
 - Source images: `scripts/photos/src`.
 - Conversion script: `npm run convert-photos`.
-  - Generates AVIF full-size + thumbnails and metadata JSON.
+  - Generates AVIF/WebP full-size + thumbnails and metadata JSON.
   - Writes to `src/assets/photos/{full-size,thumbnails,meta}`.
   - Deletes source files after successful conversion.
 - Gallery data: `src/assets/photos/index.ts` loads images + metadata via `import.meta.glob`.

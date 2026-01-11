@@ -115,6 +115,11 @@ export class PhotoGallery extends LitElement {
       height: 300px;
     }
 
+    .gallery-item picture {
+      display: block;
+      height: 100%;
+    }
+
     .gallery-item img {
       width: 100%;
       height: 100%;
@@ -309,19 +314,26 @@ export class PhotoGallery extends LitElement {
    * Renders a single gallery item with image and title
    */
   private renderGalleryItem(image: GalleryImage, index: number) {
+    const fallbackThumbnail = image.thumbnail.webp;
+    const fullSizeHref = image.src.avif;
+
     return html`
       <div class="gallery-item">
-        <a href="${image.src}" @click="${(e: Event) => this.handleImageClick(e, index)}">
-          <img
-            id="${image.id}"
-            src="${image.thumbnail}"
-            alt="${image.alt}"
-            title="${this.getImageTitle(image)}"
-            loading="lazy"
-            decoding="async"
-            width="300"
-            height="300"
-          />
+        <a href="${fullSizeHref}" @click="${(e: Event) => this.handleImageClick(e, index)}">
+          <picture>
+            <source type="image/avif" srcset="${image.thumbnail.avif}" />
+            <source type="image/webp" srcset="${image.thumbnail.webp}" />
+            <img
+              id="${image.id}"
+              src="${fallbackThumbnail}"
+              alt="${image.alt}"
+              title="${this.getImageTitle(image)}"
+              loading="lazy"
+              decoding="async"
+              width="300"
+              height="300"
+            />
+          </picture>
         </a>
         <div class="title">
           <h3>${image.title}</h3>
