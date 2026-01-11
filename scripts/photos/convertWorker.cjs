@@ -67,6 +67,7 @@ async function extractMetadata(sourcePath, metadataPath, filename) {
  * @param {number} [options.quality] - Image quality (1-100)
  * @param {boolean} [options.square] - Whether to create a square image by cropping
  * @param {string} [options.position] - Sharp position for cropping (e.g., "left", "right", "center", "top", "bottom", "left top", etc.)
+ * @param {string} [options.format] - Output format (e.g., "avif", "webp")
  * @returns {Promise<void>}
  */
 async function convertImage(sourcePath, outputPath, options = {}) {
@@ -88,11 +89,10 @@ async function convertImage(sourcePath, outputPath, options = {}) {
     pipeline = pipeline.resize(resizeOptions);
   }
 
-  await pipeline
-    .avif({
-      quality: options.quality || config.QUALITY,
-    })
-    .toFile(outputPath);
+  const format = options.format ?? "avif";
+  const quality = options.quality ?? config.QUALITY;
+
+  await pipeline.toFormat(format, { quality }).toFile(outputPath);
 }
 
 /**
@@ -108,23 +108,31 @@ async function processFile(file) {
     .replace(/\.[^/.]+$/, "");
 
   const sourcePath = path.join(config.SOURCE_DIR, file);
-  const fullSizePath = path.join(config.FULL_SIZE_DIR, `${newname}.${config.DEST_FORMAT}`);
-  const thumbnailPath = path.join(config.THUMBNAIL_DIR, `${newname}.${config.DEST_FORMAT}`);
   const metadataPath = path.join(config.META_DIR, `${newname}.json`);
 
   // Get custom thumbnail position if defined
   const thumbnailPosition = config.THUMBNAIL_POSITIONS?.[newname];
 
-  await Promise.all([
-    extractMetadata(sourcePath, metadataPath, file),
-    convertImage(sourcePath, fullSizePath, {
+  const fullSizeTasks = config.FULL_SIZE_FORMATS.map((format) =>
+    convertImage(sourcePath, path.join(config.FULL_SIZE_DIR, `${newname}.${format}`), {
       width: config.FULL_SIZE_WIDTH,
+      format,
     }),
-    convertImage(sourcePath, thumbnailPath, {
+  );
+
+  const thumbnailTasks = config.THUMBNAIL_FORMATS.map((format) =>
+    convertImage(sourcePath, path.join(config.THUMBNAIL_DIR, `${newname}.${format}`), {
       width: config.THUMBNAIL_WIDTH,
       quality: config.THUMBNAIL_QUALITY,
       square: true,
       position: thumbnailPosition,
+      format,
     }),
+  );
+
+  await Promise.all([
+    extractMetadata(sourcePath, metadataPath, file),
+    ...fullSizeTasks,
+    ...thumbnailTasks,
   ]);
 }

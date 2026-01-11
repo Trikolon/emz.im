@@ -41,6 +41,7 @@ export class LightboxDialog extends LitElement {
       max-height: 95vh;
       color: white;
       background: transparent;
+      box-sizing: border-box;
     }
 
     dialog[open] {
@@ -59,8 +60,15 @@ export class LightboxDialog extends LitElement {
       background: rgba(0, 0, 0, 0.8);
     }
 
+    picture {
+      display: contents;
+    }
+
     img {
       display: block;
+      flex: 0 1 auto;
+      width: auto;
+      height: auto;
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -263,16 +271,22 @@ export class LightboxDialog extends LitElement {
       return null;
     }
 
+    const fallbackFullSize = image.src.webp;
+
     return html`
-      <img
-        src="${image.src}"
-        alt="${image.alt}"
-        title="${image.title}"
-        @load="${() => this.onImageLoad()}"
-        class=${classMap({
-          loaded: !this.isLoading,
-        })}
-      />
+      <picture>
+        <source type="image/avif" srcset="${image.src.avif}" />
+        <source type="image/webp" srcset="${image.src.webp}" />
+        <img
+          src="${fallbackFullSize}"
+          alt="${image.alt}"
+          title="${image.title}"
+          @load="${() => this.onImageLoad()}"
+          class=${classMap({
+            loaded: !this.isLoading,
+          })}
+        />
+      </picture>
       <photo-info-panel
         .date="${image.date}"
         .advancedMeta="${image.advancedMeta}"
