@@ -108,6 +108,7 @@ export class PhotoGallery extends LitElement {
       height: 400px;
       display: flex;
       flex-direction: column;
+      content-visibility: auto;
     }
 
     .gallery-item a {
