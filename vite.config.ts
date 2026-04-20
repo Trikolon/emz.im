@@ -192,7 +192,7 @@ const photoOgPagesPlugin = (): Plugin => {
           : Buffer.from(templateAsset.source).toString("utf8");
       const siteUrl = resolveSiteUrl();
       const basePath = normalizeBasePath(resolvedConfig.base);
-      const fullSizeWebpAssets = getFullSizeAssetPathMap(bundle, basePath, "webp");
+      const fullSizeWebpAssets = getFullSizeAssetPathMap(bundle as unknown as OutputBundle, basePath, "webp");
 
       for (const photo of photoEntries) {
         const document = parse(templateHtml);
