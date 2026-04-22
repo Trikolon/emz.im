@@ -9,11 +9,13 @@
       content="Emma Zühlcke is a software engineer at Mozilla working on privacy features for Firefox and Gecko."
     />
     <title>Emma Zühlcke</title>
+    <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'rose';</script>
     <link rel="stylesheet" href="./src/index.css" />
     <script type="module" src="/src/index.ts"></script>
     <script type="module" src="/src/text-expand.ts"></script>
     <script type="module" src="/src/pixel-cat.ts"></script>
     <script type="module" src="/src/navigation-bar.ts"></script>
+    <script type="module" src="/src/theme-switcher.ts"></script>
   </head>
   <body>
     <navigation-bar></navigation-bar>
@@ -43,6 +45,7 @@
 
     <aside>
       <pixel-cat></pixel-cat>
+      <theme-switcher></theme-switcher>
     </aside>
   </body>
 </html>

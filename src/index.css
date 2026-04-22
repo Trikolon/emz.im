@@ -1,3 +1,4 @@
+/* Accent presets — default is rose, switch via data-theme on <html> */
 :root {
   --accent: #be185d;
   --accent-hover: #9f1239;
@@ -8,6 +9,45 @@
     --accent: #f472b6;
     --accent-hover: #f9a8d4;
     --accent-subtle: #73264d;
+  }
+}
+
+:root[data-theme="blue"] {
+  --accent: #0066cc;
+  --accent-hover: #0052a3;
+  --accent-subtle: #b3d4f0;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="blue"] {
+    --accent: #66b3ff;
+    --accent-hover: #99ccff;
+    --accent-subtle: #264d73;
+  }
+}
+
+:root[data-theme="teal"] {
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-subtle: #b3e6e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="teal"] {
+    --accent: #5eead4;
+    --accent-hover: #99f6e4;
+    --accent-subtle: #1a4d47;
+  }
+}
+
+:root[data-theme="amber"] {
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --accent-subtle: #f0d9b3;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="amber"] {
+    --accent: #fbbf24;
+    --accent-hover: #fcd34d;
+    --accent-subtle: #4d3d1a;
   }
 }
 
@@ -131,4 +171,10 @@ pixel-cat {
 /* For pages with centered content. */
 .main-centered {
   margin: 0 auto;
+}
+
+theme-switcher {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
 }
