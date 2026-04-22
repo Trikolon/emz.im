@@ -60,6 +60,8 @@ export class ThemeSwitcher extends LitElement {
     super.connectedCallback();
     this.currentTheme = localStorage.getItem("theme") ?? DEFAULT_THEME;
     this.readSwatchColors();
+    // Ensure the active theme is applied (in case readSwatchColors disturbed it)
+    document.documentElement.dataset.theme = this.currentTheme;
   }
 
   disconnectedCallback(): void {

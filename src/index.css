@@ -12,6 +12,19 @@
   }
 }
 
+:root[data-theme="rose"] {
+  --accent: #be185d;
+  --accent-hover: #9f1239;
+  --accent-subtle: #f0b3cc;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="rose"] {
+    --accent: #f472b6;
+    --accent-hover: #f9a8d4;
+    --accent-subtle: #73264d;
+  }
+}
+
 :root[data-theme="blue"] {
   --accent: #0066cc;
   --accent-hover: #0052a3;
