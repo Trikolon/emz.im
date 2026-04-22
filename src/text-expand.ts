@@ -12,12 +12,12 @@ export class TextExpand extends LitElement {
       display: inline-flex;
       align-items: baseline;
       cursor: pointer;
-      border-bottom: 1px dotted var(--text-color);
+      border-bottom: 1px dotted var(--accent);
       outline: none;
     }
 
     .container:focus-visible {
-      outline: 2px solid var(--link-color);
+      outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
 

@@ -39,7 +39,7 @@ export class NavigationBar extends LitElement {
     }
 
     a[aria-current="page"] {
-      color: var(--text-secondary);
+      color: var(--accent);
     }
   `;
 

@@ -87,12 +87,12 @@ export class PhotoGallery extends LitElement {
   static readonly styles = css`
     /* Use the same link styling as the rest of the site */
     a {
-      color: var(--link-color);
+      color: var(--accent);
     }
 
     a:hover,
     a:focus {
-      color: var(--link-color-hover);
+      color: var(--accent-hover);
     }
 
     .gallery {
