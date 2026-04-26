@@ -28,7 +28,8 @@ export class NavigationBar extends LitElement {
       gap: 0.5rem;
     }
 
-    a {
+    a,
+    span {
       color: var(--text-color);
       text-decoration: none;
       font-weight: bold;
@@ -38,8 +39,9 @@ export class NavigationBar extends LitElement {
       text-decoration: underline;
     }
 
-    a[aria-current="page"] {
+    [aria-current="page"] {
       color: var(--accent);
+      cursor: default;
     }
   `;
 
@@ -59,12 +61,10 @@ export class NavigationBar extends LitElement {
   render() {
     return html`
       <nav aria-label="Main navigation">
-        ${this.navItems.map(
-          (item) => html`
-            <a href="${item.path}" aria-current=${this.isCurrentPath(item.path) ? "page" : "false"}>
-              [ ${item.label} ]
-            </a>
-          `,
+        ${this.navItems.map((item) =>
+          this.isCurrentPath(item.path)
+            ? html`<span aria-current="page">[ ${item.label} ]</span>`
+            : html`<a href="${item.path}">[ ${item.label} ]</a>`,
         )}
       </nav>
     `;
