@@ -52,6 +52,13 @@ export class PixelCat extends LitElement {
       image-rendering: crisp-edges;
       /* cursor: pointer; */
     }
+
+    /* Add a drop-shadow so the black cat is visible in dark theme */
+    @media (prefers-color-scheme: dark) {
+      img {
+        filter: drop-shadow(0 0 6px rgba(255, 220, 150, 0.55));
+      }
+    }
   `;
 
   constructor() {
