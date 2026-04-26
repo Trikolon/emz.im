@@ -62,6 +62,7 @@ export class PixelCat extends LitElement {
   }
 
   protected firstUpdated(): void {
+    if (this.hidden) return;
     this.preloadAnimations();
     this.startAnimation();
   }
@@ -78,6 +79,16 @@ export class PixelCat extends LitElement {
         role="button"
       />
     `;
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    // Hide cat if storage demands it.
+    try {
+      this.hidden = window.sessionStorage.getItem("pixel-cat-hidden") === "true";
+    } catch {
+      // Ignore storage access errors.
+    }
   }
 
   disconnectedCallback(): void {
@@ -114,6 +125,12 @@ export class PixelCat extends LitElement {
 
   @eventOptions({ passive: true })
   private dismiss(): void {
+    // For the current session remember that the cat should be hidden.
+    try {
+      window.sessionStorage.setItem("pixel-cat-hidden", "true");
+    } catch {
+      // Ignore storage access errors.
+    }
     this.hidden = true;
     this.clearAllTimers();
   }
